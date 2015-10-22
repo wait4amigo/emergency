@@ -1,0 +1,168 @@
+#map {
+	height: 100%;
+}
+
+/* Scale line control */	
+.scale-line {
+}
+
+.ol-scale-line {
+	left: 50px;
+}
+
+/* Zoom slider control */
+#map .ol-zoom .ol-zoom-out {
+  	margin-top: 200px;
+}
+#map .ol-zoomslider {
+  	background-color: white;
+  	border: 1px SOLID darkgray;
+  	top: 2.3em;
+  	left: 10px;
+	width: 22px;
+}
+
+#map .ol-zoomslider-thumb {
+	width:20px;
+	margin:0px
+}
+
+#map .ol-touch .ol-zoom .ol-zoom-out {
+  	margin-top: 212px;
+}
+#map .ol-touch .ol-zoomslider {
+  	top: 2.75em;
+}
+
+#map .ol-zoom-in.ol-has-tooltip:hover [role=tooltip],
+#map .ol-zoom-in.ol-has-tooltip:focus [role=tooltip] {
+  	top: 3px;
+}
+
+#map .ol-zoom-out.ol-has-tooltip:hover [role=tooltip],
+#map .ol-zoom-out.ol-has-tooltip:focus [role=tooltip] {
+  	top: 232px;
+}
+
+#map .ol-mouse-position {
+	margin-right: 100px;
+}
+
+.map-control-button {
+    position: absolute;
+    top: 0.5em;
+    text-align:left;
+}
+
+.map-control-button button {
+    width: 22px;
+    height: 22px;
+    text-align: center;
+    background-size: 22px 22px;
+    background-repeat: no-repeat;
+    background-position: 0px;
+    background-color: gray;
+    border: 1px SOLID black;
+}
+
+.box-selection {
+    right: 80px;
+}
+
+.box-selection button {
+    background-image: url('../image/box-selection.jpg');
+    background-position: -2px !important;
+}
+
+.measure-distance {
+    right: 32px;
+}
+
+.measure-distance button {
+    background-image: url('../image/ruler.png');
+}
+
+.ol-touch .measure-distance {
+  top: 80px;
+}
+
+.ol-full-screen button {
+	margin-top: 1px;
+	margin-right: 2px;
+	width: 22px;
+	height: 22px;
+    background-size: 22px 22px;
+    background-repeat: no-repeat;
+    background-position: -1px;
+    background-color: white;
+    border: 1px SOLID black;
+	background-image: url('../image/fullscreen.png');
+}
+
+.ol-full-screen button:hover {
+	background-color: white;
+}
+
+.measure-area {
+    right: 56px;
+}
+
+.measure-area button {
+	background-color: white;
+    background-image: url('../image/measure-area.png');
+}
+
+.measure-area button:hover {
+	background-color: white;
+}
+
+.ol-touch .measure-area {
+  top: 80px;
+}
+
+.status-tips {
+	position: absolute; 
+	bottom: 0; 
+	left: 0.5em; 
+	width: 400px; 
+}
+
+.tooltip {
+	position: relative;
+	background: rgba(0, 0, 0, 0.5);
+	border-radius: 4px;
+	color: white;
+	padding: 4px 8px;
+	opacity: 0.7;
+	white-space: nowrap;
+}
+
+.tooltip-measure {
+	opacity: 1;
+	font-weight: bold;
+}
+
+.tooltip-static {
+	background-color: #ffcc33;
+	color: black;
+	border: 1px solid white;
+}
+
+.tooltip-measure:before,
+.tooltip-static:before {
+	border-top: 6px solid rgba(0, 0, 0, 0.5);
+	border-right: 6px solid transparent;
+	border-left: 6px solid transparent;
+	content: "";
+	position: absolute;
+	bottom: -6px;
+	margin-left: -7px;
+	left: 50%;
+}
+
+.tooltip-static:before {
+	border-top-color: #ffcc33;
+}
+
+.tooltip-measure-result {
+}

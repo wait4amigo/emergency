@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Emergency</title>
+		
+		<script src="js/jquery-1.11.3.js"></script>
+    	<link rel="stylesheet" href="js/jquery-ui-1.10.4.custom/css/ui-lightness/jquery-ui-1.10.4.custom.min.css" />
+		<script src="js/jquery-ui-1.10.4.custom/js/jquery-ui-1.10.4.custom.min.js"></script>
+		
+		<link rel="stylesheet" href="css/bootstrap-3.3.5/css/bootstrap.min.css">
+		<script src="css/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+		
+		<link rel="stylesheet" href="js/OpenLayers-3.9.0/css/ol.css" type="text/css">
+		<script src="js/OpenLayers-3.9.0/build/ol.js"></script>
+		
+		<link rel="stylesheet" href="css/emergency.gis.css" type="text/css">
+		<link rel="stylesheet" href="css/emergency.map.css" type="text/css">
+		<link rel="stylesheet" type="text/css" href="css/emergency.gis.layerswitcher.css">
+		
+		<link rel="stylesheet" href="js/jstree/themes/default/style.min.css" />
+		<script src="js/jstree/jstree.min.js"></script>
+
+		<script src="js/emergency.gis.data.js"></script>
+		<script src="js/emergency.gis.js"></script>
+		<script src="js/emergency.gis.dragcontrol.js"></script>
+		<script src="js/emergency.gis.measurecontrol.js"></script>
+		<script src="js/emergency.gis.layerswitcher.js"></script>
+		<script src="js/emergency.gis.boxselectioncontrol.js"></script>
+	</head>
+	
+	<body>
+		<div class="gis-area">
+			<div class="region-left-side">
+				<div class="factory-filter">
+					<div id="factory-filter-icon"></div>
+					<div class="factory-filter-text">Zones</div>
+					<div id="factory-filter-dialog">
+        				<form name="factory-filter-form" id="factory-filter-form">
+            				<div id="factory-filter-tree"></div>
+       					</form>
+    				</div>			
+				</div>	
+			</div>
+			<div class="region-left">
+				<div id="edit-area">
+					<button id="btn-set-center" class="btn btn-primary btn-xs">Set Center</button>
+					<button id="btn-locate" class="btn btn-primary btn-xs">Locate</button>
+					<button id="btn-paint-escaperoute" class="btn btn-primary btn-xs">Escape Route</button>
+				</div>
+				<div class="main-object-types-area">
+					<table>
+						<tr>
+							<td>
+								<div class="object-type" id="danger-object-group">
+									<div id="danger-type" class="object-type-icon"></div>
+									<div class="object-type-text">Das</div>		
+								</div>			
+							</td>
+							<td>
+								<div class="object-type" id="video-object-group">
+									<div id="video-type" class="object-type-icon"></div>
+									<div class="object-type-text">Vids</div>					
+								</div>			
+							</td>
+							<td>
+								<div class="object-type" id="resource-object-group">
+									<div id="resource-type" class="object-type-icon"></div>
+									<div class="object-type-text">Res</div>					
+								</div>			
+							</td>
+							<td>
+								<div class="object-type" id="harzadous-object-group">
+									<div id="harzadous-type" class="object-type-icon"></div>
+									<div class="object-type-text">Haz</div>					
+								</div>			
+							</td>
+							<td>
+								<div class="object-type" id="escaperoute-object-group">
+									<div id="escaperoute-type" class="object-type-icon"></div>
+									<div class="object-type-text">Esc</div>					
+								</div>			
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="btn-group">
+					<input type="text" id="object-filter" class="form-control object-filter">
+					<span id="object-filter-clear" class="glyphicon glyphicon-remove-circle"></span>
+				</div>
+				<div class="filters-area">
+					<table>
+						<td>
+							<div id="filter-danger-level" class="filter-list">
+								<span id="danger-level-filter-text">Danger Level</span>
+								<ul class="dropdown">
+								</ul>
+							</div>
+						</td>
+						<td>
+							<div id="filter-danger-type" class="filter-list">
+								<span id="danger-type-filter-text">Danger Type</span>
+								<ul class="dropdown">
+								</ul>
+							</div>	
+						</td>
+						<td>
+							<button id="btn-reset-filter">Reset</button>
+						</td>
+					</table>
+				</div>		
+				<div class="obj-list-area">
+					<table id="object-list">
+						<tbody></tbody>
+					</table>
+				</div>
+			</div>
+			<div class="region-right">
+				<div id="map" class="map">
+					<div id="danger-detail-form" class="detail-form popover top">
+						<div class="arrow"></div>
+						<div name="danger-form" id="danger-form">
+							<div>
+								<div style="width: 100%;border-bottom: 1px SOLID #CDCDCD;background-color: #F2F4F5">
+									<label id="danger-object-name" class="object-detail-common"></label>
+									<a href="#" id="danger-object-link" target="_blank" class="object-detail-common" style="font-size: 12px">Detail&gt;&gt;</a>
+								</div>
+								<div id="danger-object-level" class="object-detail-common"></div>
+								<button id="btn-process-emergency" class="btn btn-primary btn-xs" style="margin: 3px">Process</button>
+								<button id="btn-check-emergency" class="btn btn-primary btn-xs" style="margin: 3px">Check</button>
+								<button id="btn-view-detail" class="btn btn-primary btn-xs" style="margin: 3px">Detail</button>
+								<div class="object-img-area"><img src="" id="danger-object-img" class="obj-img"/></div>
+							</div>
+							<br />
+						</div>
+					</div>
+					<div id="video-detail-form" class="detail-form popover top">
+						<div class="arrow"></div>
+						<div name="video-form" id="video-form">
+							<div>
+								<a href="#" id="video-object-name" target="_blank" class="object-detail-common"></a>
+								<div class="video-area"></div>
+							</div>
+						</div>
+					</div>
+					<div id="resource-detail-form" class="detail-form popover top">
+						<div class="arrow"></div>
+						<div name="resource-form" id="resource-form">
+							<div>
+								<a href="#" id="resource-object-name" target="_blank" class="object-detail-common"></a>
+								<div id="resource-object-type" class="object-detail-common"></div>
+								<div class="object-img-area"><img src="" id="resource-object-img" class="obj-img"/></div>
+							</div>
+							<br />
+						</div>
+					</div>
+					<div id="harzadous-detail-form" class="detail-form popover top">
+						<div class="arrow"></div>
+						<div name="harzadous-form" id="harzadous-form">
+							<div>
+								<a href="#" id="harzadous-object-name" target="_blank" class="object-detail-common"></a>
+								<div id="harzadous-object-type" class="object-detail-common"></div>
+								<div class="object-img-area"><img src="" id="harzadous-object-img" class="obj-img"/></div>
+							</div>
+							<br />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
