@@ -57,10 +57,9 @@ $(document).ready(function(){
 		
 	registerEditEvents();
 	
-	createStatusTips();
-	
-	updateStatus();
-	gTimerId = setInterval(updateStatus, 5000);
+	//createStatusTips();
+	//updateStatus();
+	//gTimerId = setInterval(updateStatus, 5000);
 	
 	$('.btn-in-obj-list').click(function(e) {
 		e.preventDefault();
@@ -707,7 +706,6 @@ function createMap() {
     
     baseMapGroup.getLayers().push(new ol.layer.Tile({
         title: configData.base_map_group_name,
-        extent: [configData.extent.left, configData.extent.top, configData.extent.right, configData.extent.bottom],
         source: new ol.source.TileWMS({
 			url: configData.base_map_url,
 			params: {'LAYERS': configData.layers, 'TILED': true}
@@ -777,14 +775,16 @@ function createMap() {
 	  target: document.getElementById('map'),
 	  view: new ol.View({
 		center: [configData.center.lon, configData.center.lat],
-        zoom: configData.zoom
+        zoom: configData.zoom,
+		minZoom: configData.minZoom,
+		maxZoom: configData.maxZoom
 	  })
 	});
 	
 	var mode = $.getUrlParam('mode');
 	if (mode && mode == "debug") {
 		gMap.addControl(new ol.control.MousePosition({
-	  		coordinateFormat: ol.coordinate.createStringXY(4)
+	  		coordinateFormat: ol.coordinate.createStringXY(2)
 	  	}));
 	}
 	

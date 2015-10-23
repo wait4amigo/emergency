@@ -8,6 +8,8 @@ html,body {
 	margin: 0 auto; 
 	overflow: auto; 
 	display: inline-block;
+	overflow: hidden;
+	vertical-align:top;
 }
 
 .region-left-side {
@@ -16,6 +18,26 @@ html,body {
 	float: left;
 	position: absolute;
 	background-color: dimgray;
+	overflow: hidden;
+}
+
+.region-left {
+	margin-left: 50px;
+	width: 290px; 
+	height: 100%;
+	border: solid #CDCDCD;
+	border-width: 0px 1px 1px 0px;
+	position: absolute;
+	overflow: hidden;
+}
+
+.region-right {
+	margin-left: 340px;
+	height: 100%;
+	border-top: 1px solid #CDCDCD;
+	border-right: 1px solid #CDCDCD;
+	border-bottom: 1px solid #CDCDCD;
+	overflow: hidden;
 }
 
 .factory-filter {
@@ -45,24 +67,6 @@ html,body {
 .factory-filter:hover {
 	background-color: lightblue !important;
 	cursor: pointer;
-}
-
-.region-left {
-	margin-left: 50px;
-	width: 290px; 
-	height: 100%;
-	border: solid #CDCDCD;
-	border-width: 0px 1px 1px 0px;
-	position: absolute;
-}
-
-.region-right {
-	float: right;
-	width: 76%;
-	height: 100%;
-	border-top: 1px solid #CDCDCD;
-	border-right: 1px solid #CDCDCD;
-	border-bottom: 1px solid #CDCDCD;
 }
 
 #edit-area {
@@ -101,9 +105,10 @@ html,body {
 }
 
 .object-type-text {
-	margin: 0px 10px 0px 10px;
+	margin: 5px 10px 0px 10px;
 	text-align: center;
-	font-size: 13px;
+	font-weight: bold;
+	font-size: 12px;
 }
 
 #danger-type {

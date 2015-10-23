@@ -3,7 +3,7 @@ function getData(processData) {
 		{
 			"id": 1, 
 			"kind": 1,
-			"coord": [ [ -13254792, 6178557 ] ],
+			"coord": [ [ -23376278, 4067916 ] ],
 			"lat": 6178557,
 			"level": 1,
 			"type": 2,
@@ -12,25 +12,25 @@ function getData(processData) {
 		{
 			"id": 2, 
 			"kind": 2,
-			"coord": [ [ -13890000, 4290000 ] ],
+			"coord": [ [ -23375853, 4067945 ] ],
 			"name": "Video camera"
 		},
 		{
 			"id": 3, 
 			"kind": 3,
-			"coord": [ [ -10510000, 6030000 ] ],
+			"coord": [ [ -23376133, 4067245 ] ],
 			"name": "Fire extinguisher"
 		},
 		{
 			"id": 4, 
 			"kind": 4,
-			"coord": [ [ -11490000, 4070000 ] ],
+			"coord": [ [ -23375758, 4067004 ] ],
 			"name": "The 110kv transformer"
 		},
 		{
 			"id": 5, 
 			"kind": 5,
-			"coord": [ [-11470000, 4570000 ], [ -12470000, 5570000 ], [ -13470000, 5670000 ] ],
+			"coord": [ [-23376066, 4067371 ], [ -23376061, 4067436 ], [ -23376295, 4067436 ] ],
 			"name": "Fire escape route"
 		}
 	];
@@ -82,12 +82,14 @@ function saveMapCenterInfo(lon, lat, zoom) {
 
 function getMapConfig() {
 	var data = {
-		"base_map_url": "http://demo.boundlessgeo.com/geoserver/wms",
+		"base_map_url": "http://localhost:8090/iserver/services/map-Emergency/wms111/emergency",
 		"base_map_group_name": "Factory",
-		"layers": "topp:states",
-		"center": { "lon": -11864991, "lat": 4870341},
-		"extent": { "left": -15054991, "top": 1600341, "right": -5835066, "bottom": 7338219 },
-		"zoom": 5
+		"layers": "emergency",
+		"center": { "lon": -23375968, "lat": 4067441 },
+		"extent": { "left": -23376491, "top": 4068241, "right": -23375220, "bottom": 4066655 },
+		"zoom": 17,
+		"minZoom": 16,
+		"maxZoom": 22
 	};
 	
 	return data;
@@ -164,21 +166,21 @@ function getFactoryTreeData() {
 	[
 		{
 			"id": 1,
-			"text": "Whole Map",
+			"text": "全厂",
 			"state": { "opened" : true },
-			"li_attr": { "lon": -11864991, "lat": 4870341, "zoom": 6},
+			"li_attr": { "lon": -23375968, "lat": 4067441, "zoom": 16},
 			"children":
 			[
 				{
 					"id": 2,
-					"text": "Factory Zone 1",
-					"li_attr": { "lon": -11864991, "lat": 4870341, "zoom": 5},
+					"text": "炼焦分厂",
+					"li_attr": { "lon": -23375790, "lat": 4067748, "zoom": 18},
 					"state": { "opened" : true }
 				},
 				{
 					"id": 3,
-					"text": "Factory Zone 2",
-					"li_attr": { "lon": -11864991, "lat": 4870341, "zoom": 4},
+					"text": "钾盐厂",
+					"li_attr": { "lon": -23376051, "lat": 4067110, "zoom": 18},
 					"state": { "opened" : true }
 				}
 			]
