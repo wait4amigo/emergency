@@ -21,12 +21,13 @@
 		<link rel="stylesheet" href="js/jstree/themes/default/style.min.css" />
 		<script src="js/jstree/jstree.min.js"></script>
 
-		<script src="js/emergency.gis.data.js"></script>
-		<script src="js/emergency.gis.js"></script>
-		<script src="js/emergency.gis.dragcontrol.js"></script>
-		<script src="js/emergency.gis.measurecontrol.js"></script>
-		<script src="js/emergency.gis.layerswitcher.js"></script>
-		<script src="js/emergency.gis.boxselectioncontrol.js"></script>
+		<script src="js/ems.gis.data.js"></script>
+		<script src="js/ems.gis.js"></script>
+		<script src="js/ems.gis.dragcontrol.js"></script>
+		<script src="js/ems.gis.measurecontrol.js"></script>
+		<script src="js/ems.gis.layerswitcher.js"></script>
+		<script src="js/ems.gis.boxselectioncontrol.js"></script>
+		<script src="js/ems.gis.load_all_features.js"></script>
 	</head>
 	
 	<body>
@@ -89,23 +90,74 @@
 					<span id="object-filter-clear" class="glyphicon glyphicon-remove-circle"></span>
 				</div>
 				<div class="filters-area">
-					<table>
+					<table id='filter-danger-src'>
 						<td>
 							<div id="filter-danger-level" class="filter-list">
-								<span id="danger-level-filter-text">危险级别</span>
-								<ul class="dropdown">
-								</ul>
+								<span>危险级别</span><ul class="dropdown"></ul>
 							</div>
 						</td>
 						<td>
 							<div id="filter-danger-type" class="filter-list">
-								<span id="danger-type-filter-text">危险类型</span>
-								<ul class="dropdown">
-								</ul>
+								<span>危险类型</span><ul class="dropdown"></ul>
+							</div>	
+						</td>
+						<td><button>清除</button></td>
+					</table>
+					<table id='filter-harzadous'>
+						<td>
+							<div id="filter-harzadous-usage" class="filter-list">
+								<span>用途</span>
+								<ul class="dropdown"></ul>
+							</div>
+						</td>
+						<td>
+							<div id="filter-harzadous-risk" class="filter-list">
+								<span>危险性</span><ul class="dropdown"></ul>
+							</div>	
+						</td>
+						<td><button>清除</button></td>
+					</table>
+					<table id='filter-video'>
+						<td>
+							<div id="filter-video-area" class="filter-list">
+								<span>视频区域</span><ul class="dropdown"></ul>
+							</div>
+						</td>
+						<td>
+							<div id="filter-video-type" class="filter-list">
+								<span>视频类型</span><ul class="dropdown"></ul>
+							</div>	
+						</td>
+						<td><button>清除</button></td>
+					</table>
+					<table id='filter-resource'>
+						<td>
+							<div id="filter-resource-type" class="filter-list">
+								<span>物资类型</span><ul class="dropdown"></ul>
+							</div>
+						</td>
+						<td>
+							<div id="filter-resource-danger" class="filter-list">
+								<span>关联危险</span><ul class="dropdown"></ul>
 							</div>	
 						</td>
 						<td>
-							<button id="btn-reset-filter">清除</button>
+							<button>清除</button>
+						</td>
+					</table>
+					<table id='filter-escape-route'>
+						<td>
+							<div id="filter-escape-route-type" class="filter-list">
+								<span>路线类型</span><ul class="dropdown"></ul>
+							</div>
+						</td>
+						<td>
+							<div id="filter-escape-route-danger" class="filter-list">
+								<span>危险类型</span><ul class="dropdown"></ul>
+							</div>	
+						</td>
+						<td>
+							<button>清除</button>
 						</td>
 					</table>
 				</div>		

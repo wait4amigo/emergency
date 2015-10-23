@@ -280,12 +280,16 @@ html,body {
     margin: 0;
 }
 
-#btn-reset-filter {
+.filters-area button {
 	width: 72px;
 	height: 26px;
 	background: #F5F5F5;
     border: 1px SOLID #CDCDCD;
     margin-left: -1px;
+}
+
+.filters-area table {
+	display: none;
 }
 
 #btn-reset-filter:active, 
