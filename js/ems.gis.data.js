@@ -150,17 +150,14 @@ function getHarzadousInfo(id, processHarzadousInfo) {
 	processHarzadousInfo(eval(data));
 }
 
-function saveMapCenterInfo(lon, lat, zoom) {
-	alert('Saved lon=' + lon + ' lat=' + lat + ' zoom=' + zoom);
+function saveRegionLocationInfo(id, lon, lat, zoom) {
+	alert('Saved region id=' + id + ' lon=' + lon + ' lat=' + lat + ' zoom=' + zoom);
 }
 
 function getMapConfig() {
 	var data = {
-		"base_map_url": "http://localhost:8090/iserver/services/map-Emergency/wms111/emergency",
-		"base_map_group_name": "Factory",
-		"layers": "emergency",
+		"base_map_layers": [ { "name": "³§Çø", "layers": "emergency", "url": "http://localhost:8090/iserver/services/map-Emergency/wms111/emergency" } ],
 		"center": { "lon": -23375968, "lat": 4067441 },
-		"extent": { "left": -23376491, "top": 4068241, "right": -23375220, "bottom": 4066655 },
 		"zoom": 17,
 		"minZoom": 16,
 		"maxZoom": 22
@@ -196,7 +193,7 @@ function getStatus(processStatus) {
 	processStatus(data);
 }
 
-function getConfig(applyConfig) {
+function getFilterConfig(applyConfig) {
 	var data = {
 		'danger_levels': [
 			{ 

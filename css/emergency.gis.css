@@ -31,6 +31,11 @@ html,body {
 	overflow: hidden;
 }
 
+#region-left-ul li {
+	display: inline-block;
+	vertical-align: top;
+}
+
 .region-right {
 	margin-left: 340px;
 	height: 100%;
@@ -69,17 +74,31 @@ html,body {
 	cursor: pointer;
 }
 
-#edit-area {
-	height: 25px;
-	display: inline-block;
-}
-
 #edit-area button {
 	margin:2px;
 }
 
-.main-object-types-area {
-	margin-top: 0px;
+#edit-area {
+	width: 100%;
+	height: 55px;
+	display: inline-block;
+	border-bottom: 1px solid #CDCDCD;
+}
+
+#selected-area-text {
+	margin: 6px;
+	font-size: 13px;
+	font-weight: bold;
+}
+
+#selected-filter-area {
+	width: 100%;
+	height: 30px;
+	display: inline-block;
+	background: #F2F2F2;
+}
+
+#main-object-types-area {
 	height: 100px;
 	border-top: 1px solid #CDCDCD;
 	border-bottom: 1px solid #CDCDCD;
@@ -159,6 +178,11 @@ html,body {
   height: 200px;
 }
 
+#escaperoute-detail-form {
+  width: 300px;
+  height: 200px;
+}
+
 .object-detail-common {
 	margin-left: 5px;
 }
@@ -179,18 +203,20 @@ html,body {
 }
 
 .obj-list-area {
-	display: inline-block; 
-	overflow-y: auto; 
-	position: absolute; 
-	top: 175px; 
-	bottom: 0px;
+	top: 205px;
+	margin-top: 8px;
+	overflow: auto;
+	position: absolute;
+	display: inline-block;
+	bottom: 0;
+	border-top: 1px SOLID #E5E4E2;
 }
 
 .obj-list {
 }
 
 .obj-in-list {
-	padding-left: 15px;
+	padding-left: 10px;
 	padding-top: 6px;
 	padding-bottom: 4px;
 	width:288px;
@@ -202,6 +228,10 @@ html,body {
 	cursor: pointer;
 }
 
+.obj-item-in-list {
+	display: inline-block;
+}
+
 .obj-img-in-list {
 	width: 18px;
 	height: 18px;
@@ -211,6 +241,7 @@ html,body {
 	color: #2554C7;
 	font-weight: normal;
 	font-family: Arial;
+	font-size: 13px;
 	margin-left: 5px;
 	width: 180px;
 	height: 18px;
@@ -229,14 +260,14 @@ html,body {
   text-align: center;
 }
 
-.object-filter {
+.object-name-filter {
 	margin-left: 2px;
 	margin-right: 2px;
 	width: 284px;
 	height: 26px;
 }
 
-#object-filter-clear {
+#object-name-filter-clear {
     position: absolute;
     right: 5px;
     top: 0;
@@ -268,6 +299,26 @@ html,body {
 
 .filters-area {
 	margin: 4px;
+	display: inline-block;
+}
+
+.filters-area button {
+	width: 72px;
+	height: 26px;
+    border: 1px SOLID #CDCDCD;
+    margin-left: -1px;
+	font-size: 13px;
+	background: #F2F2F2;
+}
+
+.clear-text-filter-img {
+	width: 20px;
+	height: 20px;
+	margin-right: 3px;
+}
+
+.filters-area table {
+	display: none;
 }
 
 *,
@@ -278,18 +329,6 @@ html,body {
     box-sizing: border-box;
     padding: 0;
     margin: 0;
-}
-
-.filters-area button {
-	width: 72px;
-	height: 26px;
-	background: #F5F5F5;
-    border: 1px SOLID #CDCDCD;
-    margin-left: -1px;
-}
-
-.filters-area table {
-	display: none;
 }
 
 #btn-reset-filter:active, 

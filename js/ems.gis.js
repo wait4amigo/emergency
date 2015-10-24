@@ -39,15 +39,15 @@ var app = window.app;
 $(document).ready(function(){
 	var mode = $.getUrlParam('mode');
 	if (mode && mode == "edit") {
-		$(".obj-list-area").css({ top: '200px' });
+		$(".obj-list-area").css({ top: '255px' });
 		$("#edit-area").show();
 	}
 	else
 		$("#edit-area").hide();
-	
-	getConfig(applyConfig);
-		
+			
 	createMap();
+	
+	init();
 
 	loadAllFeatures();
 	
@@ -65,65 +65,14 @@ $(document).ready(function(){
 		e.preventDefault();
 		alert($(this).text());
 	});
-	
-	init();
 });
 
 function init() {
-	var filterDangerLevel = new DropDown( $('#filter-danger-level') );
-	var filterDangerType = new DropDown( $('#filter-danger-type') );
-			
-	initObjectFilter();
-	
-	initTextFilter();
-	
+	initFilters();
+		
 	initFactoryDialog();
 	
 	initFactoryFilterTree();
-}
-
-function initTextFilter() {
-	$(document).click(function() {
-		$('.filter-list').removeClass('active');
-	});
-	
-	$('#filter-danger-src button').click(function() {
-		$('#filter-danger-level span').text('危险级别');
-		$('#filter-danger-type span').text('危险类型');
-		
-		gDangerLevelFilterId = -1;
-		gDangerTypeFilterId = -1;
-		
-		getFeatures(gSelectedType);
-	});
-	
-	$('#filter-harzadous button').click(function() {
-		$('#filter-harzadous-usage span').text('用途');
-		$('#filter-harzadous-risk span').text('危险性');
-		
-		getFeatures(gSelectedType);
-	});
-	
-	$('#filter-video button').click(function() {
-		$('#filter-video-area span').text('视频区域');
-		$('#filter-video-type span').text('视频类型');
-		
-		getFeatures(gSelectedType);
-	});
-	
-	$('#filter-resource button').click(function() {
-		$('#filter-resource-type span').text('物资类型');
-		$('#filter-resource-danger span').text('关联危险');
-		
-		getFeatures(gSelectedType);
-	});
-	
-	$('#filter-escape-route button').click(function() {
-		$('#filter-escape-route-type span').text('路线类型');
-		$('#filter-escape-route-danger span').text('危险类型');
-		
-		getFeatures(gSelectedType);
-	});
 }
 
 function initFactoryDialog() {
@@ -148,10 +97,16 @@ function initFactoryDialog() {
 	$('#factory-filter-dialog').mouseleave(function(e) {
     	$("#factory-filter-dialog").dialog('close');
 	});
+	
+	$('#factory-filter-dialog').mouseout(function(e){
+		e.preventDefault();
+	});
 }
 
-function initFactoryFilterTree() {		    
-	$('#factory-filter-tree').jstree({
+function initFactoryFilterTree() {	  
+	$('#factory-filter-tree').bind('loaded.jstree', function(e, data) {
+		$(this).jstree('select_node', 'ul > li:first'); 
+	}).jstree({
 		"core" : {
 			"animation" : 0,
 			"themes" : { 
@@ -163,7 +118,7 @@ function initFactoryFilterTree() {
 		"plugins" : [
 		]
 	});
-        
+  		
     $('#factory-filter-tree').on("changed.jstree", function (e, data) {
     	var node = data.instance.get_node(data.selected[0]);
     	if (node) {
@@ -176,99 +131,34 @@ function initFactoryFilterTree() {
 
 			gMap.getView().setCenter(center);
 			gMap.getView().setZoom(node.li_attr.zoom);
+			
+			$('#selected-area-text').text('当前区域：' + node.text);
 		}
 		
 		$("#factory-filter-dialog").dialog('close');
-	});
-}
-
-function initObjectFilter() {
-	$("#object-filter-clear").click(function(){
-		$("#object-filter").val('');
-		getFeatures(gSelectedType);
-	});
-	
-	$("#object-filter").keyup(function(){
-		getFeatures(gSelectedType);
-	});
+	});	
 }
 
 function showFactoryFilterDialog() {
 	$("#factory-filter-dialog").dialog({
 		autoOpen: true,
-		width: 350,
-		height: $(window).height(),
+		resizable: false,
+		width: 'auto',
+		height: 'auto',
+		minHeight: 'auto',
+		//width: 350,
+		//height: $(window).height(),
 		modal: false,
 		closeOnEscape: true,
 		position:[50, 0],
 		dialogClass: 'factory-filter-dialog',
 		open: function () {			
 			$(".ui-dialog-titlebar").css({ display: 'none'});
-
 			$(".ui-widget-content").css({
 				background: "white"
 			});
 		}
 	});
-}
-        
-function addDangerLevels(levels) {
-	var content = ''
-	
-	for (var i = 0; i < levels.length; i++) {
-		content += '<li>';
-		content += '<a class="danger_level_item" href="#">'; 
-		content += levels[i].level_name;
-		content += '</a>';
-		content += '<label style="display: none">';
-		content += levels[i].level_id;
-		content += '</label>';
-		content += '</li>'; 
-	}
-
-	$("#filter-danger-level ul").append(content);
-	
-	$("#filter-danger-level").click(function() {
-		$("#filter-danger-type").removeClass('active');
-	});
-	
-	$('.danger_level_item').click(function() {
-		gDangerLevelFilterId = $(this).siblings("label").text();		
-		getFeatures(gSelectedType);
-	});
-}
-
-function addDangerTypes(types) {
-	var content = ''
-	
-	for (var i = 0; i < types.length; i++) {
-		content += '<li>';
-		content += '<a class="danger_type_item" href="#">'; 
-		content += types[i].type_name;
-		content += '</a>';
-		content += '<label style="display: none">';
-		content += types[i].type_id;
-		content += '</label>';
-		content += '</li>'; 
-	}
-
-	$("#filter-danger-type ul").append(content);
-	
-	$("#filter-danger-type").click(function() {
-		$("#filter-danger-level").removeClass('active');
-	});
-	
-	$('.danger_type_item').click(function() {
-		gDangerTypeFilterId = $(this).siblings("label").text();
-		$("#danger-type-filter-text").text($(this).text());
-		
-		getFeatures(gSelectedType);
-	});
-}
-
-function applyConfig(conf) {
-	addDangerLevels(conf.danger_levels);
-	addDangerTypes(conf.danger_types);
 }
 
 function isPaintEscapeRoute() {
@@ -279,14 +169,20 @@ function isPaintEscapeRoute() {
 }
 
 function registerEditEvents() {
-	$('#btn-set-center').click(function() {
+	$('#btn-region-locate').click(function() {
 		var center = gMap.getView().getCenter();
 		var zoom = gMap.getView().getZoom();
 		
-		saveMapCenterInfo(center[0], center[1], zoom);
+		var nodeId = $('#factory-filter-tree').jstree('get_selected');
+		if (!nodeId) {
+			alert("请先选择区域!");
+			return;
+		}
+		
+		saveRegionLocationInfo(nodeId, center[0], center[1], zoom);
 	});
 	
-	$('#btn-locate').click(function() {
+	$('#btn-object-locate').click(function() {
 		addDragControlInteraction(onDragMouseUpEvent);
 	});
 	
@@ -395,6 +291,9 @@ function updateHarzadousDetail(feature) {
 	});
 }
 
+function updateEscapeRouteDetail(feature) {
+}
+
 function popupFeatureDetail(feature) {
 	if (feature) {
 		var toPopupForm;
@@ -411,12 +310,19 @@ function popupFeatureDetail(feature) {
 		} else if (kind == ObjectKind.HARZADOUS) {
 			toPopupForm = 'harzadous-detail-form';
 			updateHarzadousDetail(feature);
+		} else if (kind == ObjectKind.ESCAPEROUTE) {
+			toPopupForm = 'escaperoute-detail-form';
+			updateEscapeRouteDetail(feature);
 		}
 		
 		var prevPos = gMap.getView().getCenter();
 		var prevCenter = gMap.getPixelFromCoordinate(prevPos);
+		
+		var gem = feature.getGeometry();
+		if (kind == ObjectKind.ESCAPEROUTE)
+			gem = (gem.getGeometries())[0];
 
-		var coord = feature.getGeometry().getCoordinates();
+		var coord = gem.getCoordinates();
 		var fePixel = gMap.getPixelFromCoordinate(coord);
 
 		var x = fePixel[0] >= 170 ? 0 : (190 - fePixel[0]);
@@ -447,22 +353,26 @@ function popupFeatureDetail(feature) {
 		});
 		gMap.addOverlay(popup);
 
-		$('.detail-form').not('#' + toPopupForm).hide();
-		$('#' + toPopupForm).slideToggle({ direction: "up" }, 300);
+		var toPopId = '#' + toPopupForm;
+		//if (!$(toPopId).is(":visible"))
+		//	$('.detail-form').not(toPopId).hide();
+			
+		$('.detail-form').hide();
+		$(toPopId).slideToggle({ direction: "up" }, 300);
 	} else {
 		$('.detail-form').hide();
 	}
 }
 
 function bindMapEvents() {
-	gMap.on('click', function(evt) {
+	gMap.on('click', function(e) {
 		if (isPaintEscapeRoute()) {
-			forCreateEscapeRoute.push(evt.coordinate);
+			forCreateEscapeRoute.push(e.coordinate);
 			return;
 		}
 			
 		if (getMeasureType() == '') {
-			var feature = gMap.forEachFeatureAtPixel(evt.pixel,
+			var feature = gMap.forEachFeatureAtPixel(e.pixel,
 				function(feature, layer) {
 					return feature;
 			});
@@ -470,7 +380,7 @@ function bindMapEvents() {
 			popupFeatureDetail(feature);
 		}
 	});
-	
+			
 	// change mouse cursor when over marker
 	gMap.on('pointermove', function(e) {
 		if (isPaintEscapeRoute())
@@ -509,83 +419,152 @@ function setHoverEffect(e) {
 		function(feature, layer) {
 			return feature;
 	});
-	
+
 	showHighlightedFeatures([feature]);
 }
 
-function getIconStyle(fe, hover) {
-	var iconSrc = getImageSrcByKind(fe);
-	
-	var scale = 0.08;
-		
+function getEscapeLineStyles(fe, hover) {
+	var scale = 0.18;
+
 	var lineWidth = 2;
 	var color = '#ffcc33';
 	if (hover) {
 		scale = scale * 1.5;
 		lineWidth = 2;
-		color = 'blue';
+		color = 'green';
+	}
+
+	var geoms = fe.getGeometry().getGeometries();
+    var startStyle = new ol.style.Style({
+        geometry: geoms[0],
+        image: new ol.style.Icon({
+			opacity: 1,
+			src: 'image/flag.png',
+			scale: scale,
+			anchorXUnits: 'pixels',
+			anchorYUnits: 'pixels',
+			anchor: [0, 120]
+		}),
+		text: new ol.style.Text({
+		  text: fe.get('name'),
+		  offsetY: -32,
+		  scale: 1.3,
+		  fill: new ol.style.Fill({
+			color: 'green'
+		  }),
+		  stroke: new ol.style.Stroke({
+			color: '#FFFF99',
+			width: 3.5
+		  })
+		})
+    });
+
+    var endStyle = new ol.style.Style({
+        geometry: geoms[2],
+        image: new ol.style.Icon({
+			opacity: 1,
+			src: 'image/meeting-point.jpg',
+			scale: scale
+		})
+    });
+	
+    var lineStyle = new ol.style.Style({
+        geometry: geoms[1],
+        stroke: new ol.style.Stroke({
+			color: color,
+			width: lineWidth
+		})
+    });
+
+    return [startStyle, lineStyle, endStyle];
+}
+
+function setEscapeLineStyle(feature, styles, isHover) {
+	var lineStrings = feature.get('lineStrings');
+	var icon = 'image/arrow.png';
+	if (isHover)
+		icon = 'image/arrow-blue.png';
+	
+	if (lineStrings) {
+		var segNum = 1;
+		lineStrings.forEachSegment(function(start, end) {
+			segNum++;
+			if (segNum >= lineStrings.getCoordinates().length) {
+				return;
+			}
+			var dx = end[0] - start[0];
+			var dy = end[1] - start[1];
+			var rotation = Math.atan2(dy, dx);
+			
+			// arrows
+			styles.push(new ol.style.Style({
+				geometry: new ol.geom.Point(end),
+				image: new ol.style.Icon({
+					src: icon,
+					anchor: [0.75, 0.5],
+					rotateWithView: false,
+					rotation: -rotation
+				})
+			}));
+		});	
+	}
+}
+
+function getStyles(fe, hover) {
+	if (fe.get('kind') == ObjectKind.ESCAPEROUTE) {
+		return getEscapeLineStyles(fe, hover);
+	}
+	
+	var iconSrc = getImageSrcByKind(fe);
+	
+	var scale = 0.18;
+	var textOffsetY = -22;
+	var textColor = 'green'		
+	var lineWidth = 2;
+	var color = '#ffcc33';
+	if (hover) {
+		scale = scale * 1.5;
+		lineWidth = 2;
+		color = 'green';
+	}
+	
+	if (fe.get('kind') == ObjectKind.HARZADOUS) {
+		textColor = 'red';
 	}
 	
 	return [ 	
 		new ol.style.Style({
-			image: new ol.style.Icon(({
+			image: new ol.style.Icon({
 				opacity: 1,
 				src: iconSrc,
 				scale: scale
-			})),
+			}),
 			text: new ol.style.Text({
 			  text: fe.get('name'),
-			  offsetY: -18,
+			  offsetY: textOffsetY,
 			  scale: 1.3,
 			  fill: new ol.style.Fill({
-				color: '#000000'
+				color: textColor
 			  }),
 			  stroke: new ol.style.Stroke({
 				color: '#FFFF99',
-				width: 3.5
+				width: 3.5,
+				lineCap: 'butt'
 			  })
-			})
-		}),
-		// Line style
-		new ol.style.Style({
-			stroke: new ol.style.Stroke({
-				color: color,
-				width: lineWidth
 			})
 		})
 	];
 }
 
 function setFeatureStyle(feature, isHover) {
-	var kind = feature.get('kind');
-	var styles = getIconStyle(feature, isHover);
-	feature.setStyle(styles);
+	var styles = getStyles(feature, isHover);
 	
+	var kind = feature.get('kind');
 	if (kind == ObjectKind.ESCAPEROUTE) {
-		var lineStrings = feature.get('lineStrings');
-		var icon = 'image/arrow.png';
-		if (isHover)
-			icon = 'image/arrow-blue.png';
-		
-		if (lineStrings) {
-			lineStrings.forEachSegment(function(start, end) {
-				var dx = end[0] - start[0];
-				var dy = end[1] - start[1];
-				var rotation = Math.atan2(dy, dx);
-				
-				// arrows
-				styles.push(new ol.style.Style({
-					geometry: new ol.geom.Point(end),
-					image: new ol.style.Icon({
-						src: icon,
-						anchor: [0.75, 0.5],
-						rotateWithView: false,
-						rotation: -rotation
-					})
-				}));
-			});	
-		}
+		setEscapeLineStyle(feature, styles, isHover);
 	}
+	
+	feature.setStyle(styles);
 }
 
 function showHighlightedFeatures(features) {
@@ -679,19 +658,23 @@ function getLayerVector(layerTitle, vectorSource, style) {
 
 function createMap() {
     var baseMapGroup = new ol.layer.Group({
-		title: 'Base Maps',
+		title: '基础图层',
         layers: []
     });
     
     var configData = getMapConfig();
     
-    baseMapGroup.getLayers().push(new ol.layer.Tile({
-        title: configData.base_map_group_name,
-        source: new ol.source.TileWMS({
-			url: configData.base_map_url,
-			params: {'LAYERS': configData.layers, 'TILED': true}
-		  })
-    }));
+	for (var i = 0; i < configData.base_map_layers.length; i++) {
+		var ly = configData.base_map_layers[i];
+		
+		baseMapGroup.getLayers().push(new ol.layer.Tile({
+			title: ly.name,
+			source: new ol.source.TileWMS({
+				url: ly.url,
+				params: {'LAYERS': ly.layers, 'TILED': true}
+			  })
+		}));
+	}
     
     gVideoLayerSrc = new ol.source.Vector();
     gResourceLayerSrc = new ol.source.Vector();   
@@ -700,23 +683,23 @@ function createMap() {
     gEscapeRouteLayerSrc = new ol.source.Vector();
           
     var emergencyGroup = new ol.layer.Group({
-        title: 'Emergency Maps',
+        title: '应急图层',
         layers: []
     });
     
-    gVideoLayer = getLayerVector('Videos', gVideoLayerSrc, null);
+    gVideoLayer = getLayerVector('视频', gVideoLayerSrc, null);
     emergencyGroup.getLayers().push(gVideoLayer);
     
-    gResourceLayer = getLayerVector('Resources', gResourceLayerSrc, null);
+    gResourceLayer = getLayerVector('应急物资', gResourceLayerSrc, null);
     emergencyGroup.getLayers().push(gResourceLayer);
     
-    gDangerLayer = getLayerVector('Dangers', gDangerLayerSrc, null);
+    gDangerLayer = getLayerVector('危险源', gDangerLayerSrc, null);
     emergencyGroup.getLayers().push(gDangerLayer);
     
-    gHarzadousLayer = getLayerVector("Harzadous'", gHarzadousLayerSrc, null);
+    gHarzadousLayer = getLayerVector('危化品', gHarzadousLayerSrc, null);
     emergencyGroup.getLayers().push(gHarzadousLayer);
     		
-    gEscapeRouteLayer = getLayerVector("Escape Routes", gEscapeRouteLayerSrc, escapeLineStyleFunc);
+    gEscapeRouteLayer = getLayerVector('避灾路线', gEscapeRouteLayerSrc, escapeLineStyleFunc);
     emergencyGroup.getLayers().push(gEscapeRouteLayer);		
   
     createMeasureDistanceControl();
@@ -725,18 +708,18 @@ function createMap() {
     createBoxSelectionControl(function(e) {
     	showHighlightedFeatures([]);
     }, selectFeaturesByExtent);
-    
+	   
 	gMap = new ol.Map({
-	  layers: [
-	  	baseMapGroup,
-	  	emergencyGroup
-	  ],
-	  controls: ol.control.defaults({
+		layers: [
+			baseMapGroup,
+			emergencyGroup
+		],
+		controls: ol.control.defaults({
 		attributionOptions: ({
-		  collapsible: false
+			collapsible: false
 		})
-	  }).extend([
-	  	new ol.control.ZoomSlider(),
+	}).extend([
+		new ol.control.ZoomSlider(),
 		new ol.control.ScaleLine(),
 		new ol.control.FullScreen({
 			label: '',
@@ -752,14 +735,14 @@ function createMap() {
 		new app.MeasureDistanceControl(),
 		new app.MeasureAreaControl(),
 		new app.BoxSelectionControl()
-	  ]),
-	  target: document.getElementById('map'),
-	  view: new ol.View({
-		center: [configData.center.lon, configData.center.lat],
-        zoom: configData.zoom,
-		minZoom: configData.minZoom,
-		maxZoom: configData.maxZoom
-	  })
+	]),
+	target: document.getElementById('map'),
+	view: new ol.View({
+			center: [configData.center.lon, configData.center.lat],
+			zoom: configData.zoom,
+			minZoom: configData.minZoom,
+			maxZoom: configData.maxZoom
+		})
 	});
 	
 	var mode = $.getUrlParam('mode');
@@ -854,12 +837,12 @@ function addObjectIntoList(feature) {
 	trStr += feature.get('id');
 	trStr += '</label><label class="obj-kind" style="display: none">';
 	trStr += feature.get('kind');
-	trStr += '</label><img src="';
+	trStr += '</label><div class="obj-item-in-list"><img src="';
 	trStr += getImageSrcByKind(feature);
 	trStr += '" class="obj-img-in-list"/>';
 	trStr += '<label class="obj-name-in-list">';
 	trStr += feature.get('name');
-	trStr += '</label>';
+	trStr += '</label></div>';
 	trStr += '<button class="btn-in-obj-list">';
 	
 	var kind = feature.get('kind');
@@ -891,6 +874,27 @@ function showFeaturesList(features) {
 	$("#object-list tbody").append(contentStr);
 	
 	bindObjectListEvents();
+}
+
+function bindObjectListEvents() {
+	$(".obj-in-list").hover(function() {
+		var id = $(this).find('.obj-id').text();
+		
+		var feature = findFeatureById(id);
+		
+		showHighlightedFeatures([feature]);
+	});
+	
+	$(".obj-in-list").mouseleave(function() {
+		showHighlightedFeatures(null);
+	});
+	
+	$(".obj-item-in-list").click(function() {
+		var id = $(this).parent('div').find('.obj-id').text();
+		
+		var feature = findFeatureById(id);
+		popupFeatureDetail(feature);
+	});
 }
 
 function showFilter(kind) {	
@@ -955,7 +959,7 @@ function getFeatures(kind) {
 		}
 	}
 	
-	var filter = $("#object-filter").val().trim();
+	var filter = $("#object-name-filter").val().trim();
 	
 	var tmpFeatures = [];
 	
@@ -1016,27 +1020,6 @@ function findFeatureById(id) {
 	return null;
 }
 
-function bindObjectListEvents() {
-	$(".obj-in-list").hover(function() {
-		var id = $(this).find('.obj-id').text();
-		
-		var feature = findFeatureById(id);
-		
-		showHighlightedFeatures([feature]);
-	});
-	
-	$(".obj-in-list").mouseleave(function() {
-		showHighlightedFeatures(null);
-	});
-	
-	$(".obj-name-in-list").click(function() {
-		var id = $(this).parent('div').find('.obj-id').text();
-		
-		var feature = findFeatureById(id);
-		popupFeatureDetail(feature);
-	});
-}
-
 function createStatusTips() {
     var statusStatistic = document.createElement("div");
     statusStatistic.className = 'status-summary-text';
@@ -1061,37 +1044,4 @@ function updateStatus() {
   		else
   			$('.status-summary-text').css({ color: "red" });
 	});
-}
-
-function DropDown(el) {
-    this.dd = el;
-    this.placeholder = this.dd.children('span');
-    this.opts = this.dd.find('ul.dropdown > li');
-    this.val = '';
-    this.index = -1;
-    this.initEvents();
-}
-
-DropDown.prototype = {
-    initEvents : function() {
-        var obj = this;
-
-        obj.dd.on('click', function(event){
-            $(this).toggleClass('active');
-            return false;
-        });
-
-        obj.opts.on('click',function(){
-            var opt = $(this);
-            obj.val = opt.text();
-            obj.index = opt.index();
-            obj.placeholder.text(obj.val);
-        });
-    },
-    getValue : function() {
-        return this.val;
-    },
-    getIndex : function() {
-        return this.index;
-    }
 }

@@ -11,8 +11,8 @@
 		<link rel="stylesheet" href="css/bootstrap-3.3.5/css/bootstrap.min.css">
 		<script src="css/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 		
-		<link rel="stylesheet" href="js/OpenLayers-3.9.0/css/ol.css" type="text/css">
-		<script src="js/OpenLayers-3.9.0/build/ol.js"></script>
+		<link rel="stylesheet" href="js/OpenLayers/v3.10.1/css/ol.css" type="text/css">
+		<script src="js/OpenLayers/v3.10.1/build/ol.js"></script>
 		
 		<link rel="stylesheet" href="css/emergency.gis.css" type="text/css">
 		<link rel="stylesheet" href="css/emergency.map.css" type="text/css">
@@ -28,6 +28,7 @@
 		<script src="js/ems.gis.layerswitcher.js"></script>
 		<script src="js/ems.gis.boxselectioncontrol.js"></script>
 		<script src="js/ems.gis.load_all_features.js"></script>
+		<script src="js/ems.gis.init_filters.js"></script>
 	</head>
 	
 	<body>
@@ -37,19 +38,20 @@
 					<div id="factory-filter-icon"></div>
 					<div class="factory-filter-text">区域</div>
 					<div id="factory-filter-dialog">
-        				<form name="factory-filter-form" id="factory-filter-form">
-            				<div id="factory-filter-tree"></div>
-       					</form>
+            			<div id="factory-filter-tree"></div>
     				</div>			
 				</div>	
 			</div>
 			<div class="region-left">
 				<div id="edit-area">
-					<button id="btn-set-center" class="btn btn-primary btn-xs">Set Center</button>
-					<button id="btn-locate" class="btn btn-primary btn-xs">Locate</button>
-					<button id="btn-paint-escaperoute" class="btn btn-primary btn-xs">Escape Route</button>
+					<button id="btn-region-locate" class="btn btn-primary btn-xs">区域定位</button>
+					<button id="btn-object-locate" class="btn btn-primary btn-xs">对象定位</button>
+					<button id="btn-paint-escaperoute" class="btn btn-primary btn-xs">绘制避灾路线</button>
 				</div>
-				<div class="main-object-types-area">
+				<div id="selected-filter-area">
+					<p id="selected-area-text"></p>
+				</div>
+				<div id="main-object-types-area">
 					<table>
 						<tr>
 							<td>
@@ -86,8 +88,8 @@
 					</table>
 				</div>
 				<div class="btn-group">
-					<input type="text" id="object-filter" class="form-control object-filter">
-					<span id="object-filter-clear" class="glyphicon glyphicon-remove-circle"></span>
+					<input type="text" id="object-name-filter" class="form-control object-name-filter">
+					<span id="object-name-filter-clear" class="glyphicon glyphicon-remove-circle"></span>
 				</div>
 				<div class="filters-area">
 					<table id='filter-danger-src'>
@@ -101,7 +103,7 @@
 								<span>危险类型</span><ul class="dropdown"></ul>
 							</div>	
 						</td>
-						<td><button>清除</button></td>
+						<td><button><img class="clear-text-filter-img" src='image/clear.png'/>清除</button></td>
 					</table>
 					<table id='filter-harzadous'>
 						<td>
@@ -115,7 +117,7 @@
 								<span>危险性</span><ul class="dropdown"></ul>
 							</div>	
 						</td>
-						<td><button>清除</button></td>
+						<td><button><img class="clear-text-filter-img" src='image/clear.png'/>清除</button></td>
 					</table>
 					<table id='filter-video'>
 						<td>
@@ -128,7 +130,7 @@
 								<span>视频类型</span><ul class="dropdown"></ul>
 							</div>	
 						</td>
-						<td><button>清除</button></td>
+						<td><button><img class="clear-text-filter-img" src='image/clear.png'/>清除</button></td>
 					</table>
 					<table id='filter-resource'>
 						<td>
@@ -142,7 +144,7 @@
 							</div>	
 						</td>
 						<td>
-							<button>清除</button>
+						<td><button><img class="clear-text-filter-img" src='image/clear.png'/>清除</button></td>
 						</td>
 					</table>
 					<table id='filter-escape-route'>
@@ -156,9 +158,7 @@
 								<span>危险类型</span><ul class="dropdown"></ul>
 							</div>	
 						</td>
-						<td>
-							<button>清除</button>
-						</td>
+						<td><button><img class="clear-text-filter-img" src='image/clear.png'/>清除</button></td>
 					</table>
 				</div>		
 				<div class="obj-list-area">
@@ -213,6 +213,16 @@
 								<a href="#" id="harzadous-object-name" target="_blank" class="object-detail-common"></a>
 								<div id="harzadous-object-type" class="object-detail-common"></div>
 								<div class="object-img-area"><img src="" id="harzadous-object-img" class="obj-img"/></div>
+							</div>
+							<br />
+						</div>
+					</div>
+					<div id="escaperoute-detail-form" class="detail-form popover top">
+						<div class="arrow"></div>
+						<div name="escaperoute-form" id="escaperoute-form">
+							<div>
+								<a href="#" id="escaperoute-object-name" target="_blank" class="object-detail-common"></a>
+								<div id="escaperoute-object-type" class="object-detail-common"></div>
 							</div>
 							<br />
 						</div>
