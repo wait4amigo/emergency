@@ -356,7 +356,8 @@ function addEscapeRoute(id, coords, escapeRouteAddedFunc) {
 		"id": id, 
 		"kind": 5,
 		"coord": coords,
-		"name": "New added escape"
+		"name": "New added escape",
+        "danger_id": 101
 	};
 	
 	escapeRouteAddedFunc(data);
