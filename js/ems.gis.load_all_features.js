@@ -19,7 +19,20 @@ function addDangers(data) {
 		
 	var fes = [];	
 	for (var i = 0; i < data.length; i++) {
-  		var obj = data[i];
+	    var obj = data[i];
+
+	    var fer = null;
+	    if (obj.affect && obj.affect.length != 0) {
+	        fer = new ol.Feature({
+	            geometry: new ol.geom.Polygon(obj.affect),
+	            kind: ObjectKind.DANGERRANGE,
+	            danger_id: obj.id
+	        });
+
+	        setFeatureStyle(fer, false);
+	        fes.push(fer);
+	    }
+
   		var fe = new ol.Feature({
 			geometry: new ol.geom.Point(obj.coord),
 			name: obj.name,
@@ -27,11 +40,14 @@ function addDangers(data) {
 			type: obj.type,
 			level: obj.level,
 			id: obj.id
-		});
-		
-		setFeatureStyle(fe, false);
-		fes.push(fe);
-  	}
+  		});
+
+  		if (fer)
+  		    fe.set('danger_range_feature', fer);
+
+  		setFeatureStyle(fe, false);
+  		fes.push(fe);
+    }
 	
 	gDangerLayerSrc.addFeatures(fes);
 }
@@ -110,33 +126,20 @@ function addEscapeRoutes(data) {
 	for (var i = 0; i < data.length; i++)
   	{
   		var obj = data[i];
-		var fe = addEscapeObject(obj);
-		
-		setFeatureStyle(fe, false);
-		fes.push(fe);
+		fes.push(addEscapeObject(obj));
   	}
 	
 	gEscapeRouteLayerSrc.addFeatures(fes);
 }
 
 function addEscapeObject(obj) {
-	var startPoint = new ol.geom.Point(obj.coord[0]);
-	var lineStrings = new ol.geom.LineString(obj.coord);
-	var meetingPoint = new ol.geom.Point(obj.coord[obj.coord.length - 1]);
-				
-	var fe = new ol.Feature({
-		geometry: new ol.geom.GeometryCollection([
-			startPoint,
-			lineStrings,
-			meetingPoint		
-		]),
+    var fe = new ol.Feature({
+        geometry: new ol.geom.LineString(obj.coord),
 		name: obj.name,
 		kind: ObjectKind.ESCAPEROUTE,
 		id: obj.id,
-		lineStrings: lineStrings
-	});
-		
-	setFeatureStyle(fe, false);
+        danger_id: obj.danger_id
+    });
 	
 	return fe;
 }

@@ -3,14 +3,12 @@ var gVideoLayer, gResourceLayer, gDangerLayer, gHarzadousLayer, gEscapeRouteLaye
 var gVideoLayerSrc, gResourceLayerSrc, gDangerLayerSrc, gHarzadousLayerSrc, gEscapeRouteLayerSrc;
 var gHoveredFeature;
 
-var gEscapeRouteDraw, gEscapeRouteModify;
+var gDraw, gModify, gForCacheModifyData;
 
 var gTimerId = null;
 
 var gDangerLevelFilterId = -1;
 var gDangerTypeFilterId = -1;
-
-var forCreateEscapeRoute = [];
 
 var ObjectKind = {
 	NONE: -1,
@@ -18,11 +16,13 @@ var ObjectKind = {
   	VIDEO: 2,
   	RESOURCE: 3,
   	HARZADOUS: 4,
-  	ESCAPEROUTE: 5
+  	ESCAPEROUTE: 5,
+    DANGERRANGE: 6
 };
 
 var gSelectedType = ObjectKind.NONE;
 var gSelectedFeatures = [];
+var gSelectedFeature;
 
 window.app = {};
 var app = window.app;
@@ -57,14 +57,9 @@ $(document).ready(function(){
 		
 	registerEditEvents();
 	
-	//createStatusTips();
-	//updateStatus();
-	//gTimerId = setInterval(updateStatus, 5000);
-	
-	$('.btn-in-obj-list').click(function(e) {
-		e.preventDefault();
-		alert($(this).text());
-	});
+	createStatusTips();
+	updateStatus();
+	gTimerId = setInterval(updateStatus, 3000);
 });
 
 function init() {
@@ -161,67 +156,248 @@ function showFactoryFilterDialog() {
 	});
 }
 
-function isPaintEscapeRoute() {
-	if (gEscapeRouteDraw)
+function isInEditing() {
+    if (gDraw)
+		return true;
+		
+	if (gModify)
 		return true;
 	
 	return false;
 }
-
+	 
 function registerEditEvents() {
+	registerRegionLocate();
+	
+	$('#btn-object-locate').click(function() {
+		addDragControlInteraction(onDragMouseUpEvent);
+	});
+	
+	registerPaintEscapeRoute();
+	registerModifyEscapeRoute();
+
+	registerPaintDangerRange();
+	registerModifyDangerRange();
+}
+
+function registerRegionLocate() {
 	$('#btn-region-locate').click(function() {
 		var center = gMap.getView().getCenter();
 		var zoom = gMap.getView().getZoom();
 		
 		var nodeId = $('#factory-filter-tree').jstree('get_selected');
 		if (!nodeId) {
-			alert("请先选择区域!");
+		    showMessage("错误", "请先选择区域!");
 			return;
 		}
 		
-		saveRegionLocationInfo(nodeId, center[0], center[1], zoom);
+		$.when(customConfirm('保存区域范围', '确定更新区域缺省显示为当前地图范围吗?')).then(function (confirm) {
+            if (confirm) {
+                saveRegionLocationInfo(nodeId, center[0], center[1], zoom);
+            }
+        });
 	});
-	
-	$('#btn-object-locate').click(function() {
-		addDragControlInteraction(onDragMouseUpEvent);
-	});
-	
-	$('#btn-paint-escaperoute').click(function() {
-		gEscapeRouteDraw = new ol.interaction.Draw({
-		  source: gEscapeRouteLayerSrc,
-		  type: /** @type {ol.geom.GeometryType} */ ('LineString')
-		});
-		
-		gEscapeRouteDraw.on("drawend", function(e){
-			gMap.removeInteraction(gEscapeRouteDraw);
-			//gMap.removeInteraction(gEscapeRouteModify);
-			gEscapeRouteDraw = null;
+}
+
+Array.prototype.containsCoords = function (obj) {
+    var i = this.length;
+    while (i--) {
+        var tho = this[i];
+        if (tho.length != obj.length)
+            continue;
+
+        var hasDiff = false;
+        for (var j = 0; j < tho.length; j++) {
+            if ((tho[j][0] != obj[j][0]) || (tho[j][1] != obj[j][1])) {
+                hasDiff = true;
+                break;
+            }
+        }
+
+        if (!hasDiff)
+            return true;
+    }
+
+    return false;
+}
+
+function unregisterAllEditing() {
+    clearMeasureType();
+    removeMeasureInteraction();
+
+    unregisterModifying();
+    unregisterPainting();
+}
+
+function registerModifyDangerRange() {
+    $('#btn-modify-danger-range').click(function () {
+        unregisterAllEditing();
+
+        var allRangeFeatures = [];
+        gDangerLayerSrc.getFeatures().forEach(function(fe) {
+            if (fe.get('kind') == ObjectKind.DANGERRANGE)
+                allRangeFeatures.push(fe);
+        });
+
+        registerModifyEvent(allRangeFeatures, function (id, coords) {
+            updateDangerRange(id, coords, function () {});
+        });
+    });
+}
+
+function registerPaintDangerRange() {
+    $('#btn-paint-danger-range').click(function () {
+        unregisterAllEditing();
+
+        registerPaint(gDangerLayerSrc, 'Polygon', function () {
+            if (!gSelectedFeature || gSelectedFeature.get('kind') != ObjectKind.DANGER) {
+                unregisterPainting();
+                showMessage('错误', '请先选择要绘制影响区域的危险源!');
+                return;
+            }
+        }, function (e) {
+            $.when(customConfirm('绘制影响区域', '影响区域绘制完成，确定更新为此新绘制的影响区域吗?')).then(function (confirm) {
+                var newFeature = e.feature;
+
+                var dangerId = gSelectedFeature.get('id');
+
+                newFeature.set('kind', ObjectKind.DANGERRANGE);
+                newFeature.set('danger_id', dangerId);
+                setFeatureStyle(newFeature, false);
+
+                var oldFeature = gSelectedFeature.get('danger_range_feature');
+
+                var newCoords = newFeature.getGeometry().getCoordinates();
+                if (confirm) {
+                    updateDangerRange(dangerId, newCoords, function () {
+                        gSelectedFeature.set('danger_range_feature', newFeature);
+
+                        if (oldFeature)
+                            gDangerLayerSrc.removeFeature(oldFeature);
+
+                        gSelectedFeature = null;
+                    });
+                } else {
+                    gDangerLayerSrc.removeFeature(newFeature);
+                }
+            });
+
+            unregisterPainting();
+        });
+    });
+}
+
+function unregisterModifying() {
+    if (gModify) {
+        gMap.removeInteraction(gModify);
+        gModify = null;
+    }
+}
+
+function unregisterPainting() {
+    if (gDraw) {
+        gMap.removeInteraction(gDraw);
+        gDraw = null;
+    }
+}
+
+function registerModifyEscapeRoute() {
+	$('#btn-modify-escaperoute').click(function() {
+	    unregisterAllEditing();
 			
-			addEscapeRoute(6, forCreateEscapeRoute, function(data) {
-				var feature = addEscapeObject(data);
-				gEscapeRouteLayerSrc.addFeatures([feature]);
-			});
-		});
-		
-		gEscapeRouteDraw.on("drawstart", function(e){
-			forCreateEscapeRoute = [];
-		});
-		
-		gMap.addInteraction(gEscapeRouteDraw);	
-				
-		/*gEscapeRouteModify = new ol.interaction.Modify({
-			source: gEscapeRouteLayerSrc,
-			// the SHIFT key must be pressed to delete vertices, so
-			// that new vertices can be drawn at the same position
-			// of existing vertices
-			deleteCondition: function(event) {
-			return ol.events.condition.shiftKeyOnly(event) &&
-				ol.events.condition.singleClick(event);
-			}
-		});
-		
-		gMap.addInteraction(gEscapeRouteModify);*/
+	    registerModifyEvent(gEscapeRouteLayerSrc.getFeatures(), function (id, coords) {
+	        updateEscapeRoute(id, coords, function () { });
+	    });
 	});
+}
+
+function registerModifyEvent(features, onModified) {
+    gModify = new ol.interaction.Modify({
+        features: new ol.Collection(features),
+        style: new ol.style.Style({
+            image: new ol.style.Circle({
+                radius: 5,
+                fill: new ol.style.Fill({
+                    color: '#000000'
+                })
+            })
+        }),
+        deleteCondition: ol.events.condition.never
+    });
+    
+    gModify.on('modifystart', function (e) {
+        gForCacheModifyData = [];
+        e.features.forEach(function (fe) {
+            if (fe.get('kind') == ObjectKind.DANGERRANGE)
+                gForCacheModifyData.push(fe.getGeometry().getCoordinates()[0]);
+            else
+                gForCacheModifyData.push(fe.getGeometry().getCoordinates());
+        });
+    });
+    
+    gModify.on("modifyend", function (e) {
+        e.features.forEach(function (fe) {
+            var coords;
+            if (fe.get('kind') == ObjectKind.DANGERRANGE)
+                coords = fe.getGeometry().getCoordinates()[0];
+            else
+                coords = fe.getGeometry().getCoordinates();
+
+            if (!gForCacheModifyData.containsCoords(coords)) {
+                onModified(fe.get('danger_id'), coords);
+            }
+        });
+    });
+    
+    gMap.addInteraction(gModify);
+}
+
+function registerPaintEscapeRoute() {
+    $('#btn-paint-escaperoute').click(function () {
+        unregisterAllEditing();
+
+        registerPaint(gEscapeRouteLayerSrc, 'LineString', function () {
+            if (!gSelectedFeature || gSelectedFeature.get('kind') != ObjectKind.ESCAPEROUTE) {
+                unregisterPainting();
+                showMessage('错误', '请先选择要绘制的避灾路线!');
+                return;
+            }
+        }, function (e) {
+            $.when(customConfirm('更新避灾路线', '避灾路线绘制完成，确定更新为此新绘制的路线吗?')).then(function (confirm) {
+                var newCoords = e.feature.getGeometry().getCoordinates();
+                gEscapeRouteLayerSrc.removeFeature(e.feature);
+
+                if (confirm) {
+                    addEscapeRoute(ObjectKind.ESCAPEROUTE, newCoords, function (data) {
+                        var fe = addEscapeObject(data);
+                        fe.set('name', gSelectedFeature.get('name')); // For demo
+                        gEscapeRouteLayerSrc.addFeatures([fe]);
+                        gEscapeRouteLayerSrc.removeFeature(gSelectedFeature);
+                        gSelectedFeature = null;
+                    });
+                }
+            });
+
+            unregisterPainting();
+        });
+	});
+}
+
+function registerPaint(vectorSrc, type, startFunc, endFunc) {
+    gDraw = new ol.interaction.Draw({
+        source: vectorSrc,
+        type: /** @type {ol.geom.GeometryType} */ (type)
+    });
+    
+    gDraw.on("drawstart", function (e) {
+        startFunc();
+    });
+    
+    gDraw.on("drawend", function (e) {
+        endFunc(e);
+    });
+    
+    gMap.addInteraction(gDraw);
 }
 
 function onDragMouseUpEvent(feature, coordinate) {
@@ -246,10 +422,10 @@ function getImageSrcByKind(feature) {
 		case ObjectKind.HARZADOUS:
 			iconSrc = 'image/harzadous.png';
 			break;
-		case ObjectKind.ESCAPEROUTE:
-			iconSrc = 'image/flag.png';
-			break;
-		default:
+	    case ObjectKind.ESCAPEROUTE:
+	        iconSrc = 'image/flag.png';
+	        break;
+	    default:
 			iconSrc = '';
 			break;
 	}
@@ -295,9 +471,15 @@ function updateEscapeRouteDetail(feature) {
 }
 
 function popupFeatureDetail(feature) {
-	if (feature) {
+    if (feature) {
+        if (gDraw) {
+            gSelectedFeature = feature;
+            return; // We don't pop up feature detail while painting the escape route
+        }
+
 		var toPopupForm;
 		var kind = feature.get('kind');
+
 		if (kind == ObjectKind.DANGER) {
 			toPopupForm = 'danger-detail-form';
 			updateDangerDetail(feature);
@@ -318,11 +500,11 @@ function popupFeatureDetail(feature) {
 		var prevPos = gMap.getView().getCenter();
 		var prevCenter = gMap.getPixelFromCoordinate(prevPos);
 		
-		var gem = feature.getGeometry();
 		if (kind == ObjectKind.ESCAPEROUTE)
-			gem = (gem.getGeometries())[0];
+		    coord = feature.getGeometry().getCoordinates()[0];
+		else 
+		    coord = feature.getGeometry().getCoordinates();
 
-		var coord = gem.getCoordinates();
 		var fePixel = gMap.getPixelFromCoordinate(coord);
 
 		var x = fePixel[0] >= 170 ? 0 : (190 - fePixel[0]);
@@ -346,10 +528,10 @@ function popupFeatureDetail(feature) {
 		gMap.getView().setCenter(gMap.getCoordinateFromPixel(prevCenter));
 
 		var popup = new ol.Overlay({
-		  element: document.getElementById(toPopupForm),
-		  positioning: 'top',
-		  stopEvent: false,
-		  position: coord
+			element: document.getElementById(toPopupForm),
+			positioning: 'top',
+			stopEvent: false,
+			position: coord
 		});
 		gMap.addOverlay(popup);
 
@@ -366,10 +548,8 @@ function popupFeatureDetail(feature) {
 
 function bindMapEvents() {
 	gMap.on('click', function(e) {
-		if (isPaintEscapeRoute()) {
-			forCreateEscapeRoute.push(e.coordinate);
+		if (isInEditing())
 			return;
-		}
 			
 		if (getMeasureType() == '') {
 			var feature = gMap.forEachFeatureAtPixel(e.pixel,
@@ -383,7 +563,7 @@ function bindMapEvents() {
 			
 	// change mouse cursor when over marker
 	gMap.on('pointermove', function(e) {
-		if (isPaintEscapeRoute())
+		if (isInEditing())
 			return;
 			
 		if (e.dragging) {
@@ -407,10 +587,9 @@ function bindMapEvents() {
 	});
 	
 	gMap.getViewport().addEventListener('contextmenu', function (e) {
-		e.preventDefault();
-		
-		clearMeasureType();
-		removeMeasureInteraction();
+	    e.preventDefault();
+
+		unregisterAllEditing();
 	});
 }
 
@@ -423,108 +602,102 @@ function setHoverEffect(e) {
 	showHighlightedFeatures([feature]);
 }
 
-function getEscapeLineStyles(fe, hover) {
-	var scale = 0.18;
+var escapeLineStyleFunc = function(feature, resolution) {
+	return getEscapeLineStyles(feature, false);
+};
 
-	var lineWidth = 2;
-	var color = '#ffcc33';
-	if (hover) {
-		scale = scale * 1.5;
-		lineWidth = 2;
-		color = 'green';
-	}
+function pushArrowStyle(styles, icon, scale, pos, rotation) {
+	styles.push(new ol.style.Style({
+		geometry: new ol.geom.Point(pos),
+		image: new ol.style.Icon({
+			src: icon,
+			anchor: [0.75, 0.5],
+			rotateWithView: false,
+			rotation: -rotation
+		})
+	}));
+}
 
-	var geoms = fe.getGeometry().getGeometries();
-    var startStyle = new ol.style.Style({
-        geometry: geoms[0],
-        image: new ol.style.Icon({
-			opacity: 1,
-			src: 'image/flag.png',
+function pushEndImageStyle(styles, imageSrc, scale, pos) {
+	styles.push(new ol.style.Style({
+		geometry: new ol.geom.Point(pos),
+		image: new ol.style.Icon({
+			src: imageSrc,
 			scale: scale,
 			anchorXUnits: 'pixels',
 			anchorYUnits: 'pixels',
-			anchor: [0, 120]
-		}),
-		text: new ol.style.Text({
-		  text: fe.get('name'),
-		  offsetY: -32,
-		  scale: 1.3,
-		  fill: new ol.style.Fill({
-			color: 'green'
-		  }),
-		  stroke: new ol.style.Stroke({
-			color: '#FFFF99',
-			width: 3.5
-		  })
+			anchor: [6, 60]
 		})
-    });
-
-    var endStyle = new ol.style.Style({
-        geometry: geoms[2],
-        image: new ol.style.Icon({
-			opacity: 1,
-			src: 'image/meeting-point.jpg',
-			scale: scale
-		})
-    });
-	
-    var lineStyle = new ol.style.Style({
-        geometry: geoms[1],
-        stroke: new ol.style.Stroke({
-			color: color,
-			width: lineWidth
-		})
-    });
-
-    return [startStyle, lineStyle, endStyle];
+	}));
 }
 
-function setEscapeLineStyle(feature, styles, isHover) {
-	var lineStrings = feature.get('lineStrings');
-	var icon = 'image/arrow.png';
-	if (isHover)
-		icon = 'image/arrow-blue.png';
-	
-	if (lineStrings) {
-		var segNum = 1;
-		lineStrings.forEachSegment(function(start, end) {
-			segNum++;
-			if (segNum >= lineStrings.getCoordinates().length) {
-				return;
-			}
-			var dx = end[0] - start[0];
-			var dy = end[1] - start[1];
-			var rotation = Math.atan2(dy, dx);
-			
-			// arrows
-			styles.push(new ol.style.Style({
-				geometry: new ol.geom.Point(end),
-				image: new ol.style.Icon({
-					src: icon,
-					anchor: [0.75, 0.5],
-					rotateWithView: false,
-					rotation: -rotation
-				})
-			}));
-		});	
-	}
-}
-
-function getStyles(fe, hover) {
-	if (fe.get('kind') == ObjectKind.ESCAPEROUTE) {
-		return getEscapeLineStyles(fe, hover);
-	}
-	
-	var iconSrc = getImageSrcByKind(fe);
-	
-	var scale = 0.18;
-	var textOffsetY = -22;
-	var textColor = 'green'		
+function getEscapeLineStyles(fe, hover) {
+	var scale = 0.4;
 	var lineWidth = 2;
-	var color = '#ffcc33';
+	var color = '#00ff00';
+	var icon = 'image/arrow-green.png';
+	
 	if (hover) {
 		scale = scale * 1.5;
 		lineWidth = 2;
+		color = '#ffcc33';
+		icon = 'image/arrow-yellow.png';
+	}
+	
+	var geometry = fe.getGeometry();
+	
+    var styles = [ 
+		new ol.style.Style({
+			text: new ol.style.Text({
+				text: fe.get('name'),
+				offsetY: -32,
+				scale: 1.3,
+				fill: new ol.style.Fill({
+					color: color
+				}),
+				stroke: new ol.style.Stroke({
+					color: '#FFFF99',
+					width: 3.5
+				})
+			}),
+			stroke: new ol.style.Stroke({
+				color: color,
+				width: 2
+			})
+		})
+	];
+	
+	var num = 0;
+	var numCount = geometry.getCoordinates().length;
+
+	geometry.forEachSegment(function(start, end) {
+		var dx = end[0] - start[0];
+		var dy = end[1] - start[1];
+		var rotation = Math.atan2(dy, dx);
+		
+		if (num == 0) {
+			pushEndImageStyle(styles, 'image/flag.png', scale, start);
+			pushArrowStyle(styles, icon, scale, end, rotation);
+		} else if (num < numCount - 2) {
+			pushArrowStyle(styles, icon, scale, end, rotation);
+		} else {
+			pushEndImageStyle(styles, 'image/meeting-point.jpg', scale, end);
+		}
+		num++;
+	});
+	
+	return styles;
+}
+
+function setFeatureStyle(fe, hover) {	
+	var iconSrc = getImageSrcByKind(fe);
+	
+	var scale = 0.4;
+	var textOffsetY = -22;
+	var textColor = 'green'		
+	var color = '#ffcc33';
+	if (hover) {
+		scale = scale * 1.5;
 		color = 'green';
 	}
 	
@@ -532,53 +705,57 @@ function getStyles(fe, hover) {
 		textColor = 'red';
 	}
 	
-	return [ 	
+	var styles = [ 	
 		new ol.style.Style({
-			image: new ol.style.Icon({
-				opacity: 1,
-				src: iconSrc,
-				scale: scale
-			}),
-			text: new ol.style.Text({
-			  text: fe.get('name'),
-			  offsetY: textOffsetY,
-			  scale: 1.3,
-			  fill: new ol.style.Fill({
-				color: textColor
-			  }),
-			  stroke: new ol.style.Stroke({
-				color: '#FFFF99',
-				width: 3.5,
-				lineCap: 'butt'
-			  })
-			})
+            image: new ol.style.Icon({
+            	opacity: 1,
+            	src: iconSrc,
+            	scale: scale
+            }),
+            text: new ol.style.Text({
+                text: fe.get('name'),
+                offsetY: textOffsetY,
+                scale: 1.3,
+                fill: new ol.style.Fill({
+                    color: textColor
+                }),
+                stroke: new ol.style.Stroke({
+                    color: '#FFFF99',
+                    width: 3.5,
+                    lineCap: 'butt'
+                })
+            }),
+            fill: new ol.style.Fill({
+                color: 'rgba(255, 0, 0, 0.2)'
+            }),
+            stroke: new ol.style.Stroke({
+                color: '#ffcc33',
+                width: 2
+            })
 		})
 	];
-}
-
-function setFeatureStyle(feature, isHover) {
-	var styles = getStyles(feature, isHover);
 	
-	var kind = feature.get('kind');
-	if (kind == ObjectKind.ESCAPEROUTE) {
-		setEscapeLineStyle(feature, styles, isHover);
-	}
-	
-	feature.setStyle(styles);
+	fe.setStyle(styles);
 }
 
 function showHighlightedFeatures(features) {
 	if (gSelectedFeatures) {
 		for (var i = 0; i < gSelectedFeatures.length; i++) {
 			var fe = gSelectedFeatures[i];
-			setFeatureStyle(fe, false);
+			if (fe.get('kind') == ObjectKind.ESCAPEROUTE)
+				fe.setStyle(getEscapeLineStyles(fe, false));
+			else
+				setFeatureStyle(fe, false);
 		}
 	}
 	
 	if (features) {
 		for (var i = 0; i < features.length; i++) {
 			var fe = features[i];
-			setFeatureStyle(fe, true);
+			if (fe.get('kind') == ObjectKind.ESCAPEROUTE)
+				fe.setStyle(getEscapeLineStyles(fe, true));
+			else
+				setFeatureStyle(fe, true);
 		}
 	}
 	
@@ -612,48 +789,20 @@ function selectFeaturesByExtent(extent) {
 	showFeaturesList(selectedFeatures);
 }
 
-var escapeLineStyleFunc = function(feature, resolution) {
-	var geometry = feature.getGeometry();
-	var styles = [
-		new ol.style.Style({
-			stroke: new ol.style.Stroke({
-				color: '#ffcc33',
-				width: 2
-			})
-		})
-	];
-
-	geometry.forEachSegment(function(start, end) {
-		var dx = end[0] - start[0];
-		var dy = end[1] - start[1];
-		var rotation = Math.atan2(dy, dx);
-		// arrows
-		styles.push(new ol.style.Style({
-			geometry: new ol.geom.Point(end),
-			image: new ol.style.Icon({
-				src: 'image/arrow.png',
-				anchor: [0.75, 0.5],
-				rotateWithView: false,
-				rotation: -rotation
-			})
-		}));
-	});
-
-	return styles;
-};
-
-function getLayerVector(layerTitle, vectorSource, style) {
-	if (style)
+function getLayerVector(layerTitle, vectorSource, isEscapeLine) {
+	if (isEscapeLine) {
 		return new ol.layer.Vector({
 			title: layerTitle,
 			source: vectorSource,
-			style: style
+			style: escapeLineStyleFunc
 		});
-	else
+	}
+	else {
 	    return new ol.layer.Vector({
-        title: layerTitle,
-        source: vectorSource
-    });
+			title: layerTitle,
+			source: vectorSource
+		});
+	}
 }
 
 function createMap() {
@@ -681,27 +830,27 @@ function createMap() {
     gDangerLayerSrc = new ol.source.Vector();
     gHarzadousLayerSrc = new ol.source.Vector();
     gEscapeRouteLayerSrc = new ol.source.Vector();
-          
+
     var emergencyGroup = new ol.layer.Group({
         title: '应急图层',
         layers: []
     });
     
-    gVideoLayer = getLayerVector('视频', gVideoLayerSrc, null);
+    gVideoLayer = getLayerVector('视频', gVideoLayerSrc, false);
     emergencyGroup.getLayers().push(gVideoLayer);
     
-    gResourceLayer = getLayerVector('应急物资', gResourceLayerSrc, null);
+    gResourceLayer = getLayerVector('应急物资', gResourceLayerSrc, false);
     emergencyGroup.getLayers().push(gResourceLayer);
     
-    gDangerLayer = getLayerVector('危险源', gDangerLayerSrc, null);
+    gDangerLayer = getLayerVector('危险源', gDangerLayerSrc, false);
     emergencyGroup.getLayers().push(gDangerLayer);
     
-    gHarzadousLayer = getLayerVector('危化品', gHarzadousLayerSrc, null);
+    gHarzadousLayer = getLayerVector('危化品', gHarzadousLayerSrc, false);
     emergencyGroup.getLayers().push(gHarzadousLayer);
     		
-    gEscapeRouteLayer = getLayerVector('避灾路线', gEscapeRouteLayerSrc, escapeLineStyleFunc);
-    emergencyGroup.getLayers().push(gEscapeRouteLayer);		
-  
+    gEscapeRouteLayer = getLayerVector('避灾路线', gEscapeRouteLayerSrc, true);
+    emergencyGroup.getLayers().push(gEscapeRouteLayer);
+
     createMeasureDistanceControl();
     createMeasureAreaControl();
     
@@ -714,30 +863,33 @@ function createMap() {
 			baseMapGroup,
 			emergencyGroup
 		],
+		interactions: ol.interaction.defaults({ 
+			doubleClickZoom: false 
+		}),
 		controls: ol.control.defaults({
-		attributionOptions: ({
-			collapsible: false
-		})
-	}).extend([
-		new ol.control.ZoomSlider(),
-		new ol.control.ScaleLine(),
-		new ol.control.FullScreen({
-			label: '',
-			labelActive: '',
-			className: 'ol-full-screen'
-		}),
-		new ol.control.OverviewMap({
-			layers: [
-				baseMapGroup
-			]
-		}),
-		new ol.control.LayerSwitcher(),
-		new app.MeasureDistanceControl(),
-		new app.MeasureAreaControl(),
-		new app.BoxSelectionControl()
-	]),
-	target: document.getElementById('map'),
-	view: new ol.View({
+			attributionOptions: ({
+				collapsible: false
+			})
+		}).extend([
+			new ol.control.ZoomSlider(),
+			new ol.control.ScaleLine(),
+			new ol.control.FullScreen({
+				label: '',
+				labelActive: '',
+				className: 'ol-full-screen'
+			}),
+			new ol.control.OverviewMap({
+				layers: [
+					baseMapGroup
+				]
+			}),
+			new ol.control.LayerSwitcher(),
+			new app.MeasureDistanceControl(),
+			new app.MeasureAreaControl(),
+			new app.BoxSelectionControl()
+		]),
+		target: document.getElementById('map'),
+		view: new ol.View({
 			center: [configData.center.lon, configData.center.lat],
 			zoom: configData.zoom,
 			minZoom: configData.minZoom,
@@ -833,29 +985,33 @@ function bindObjectTypeClickEvent() {
 
 function addObjectIntoList(feature) {
 	var trStr = '<div class="obj-in-list"><td>'; 
-	trStr += '<label class="obj-id" style="display: none">';
-	trStr += feature.get('id');
-	trStr += '</label><label class="obj-kind" style="display: none">';
-	trStr += feature.get('kind');
-	trStr += '</label><div class="obj-item-in-list"><img src="';
-	trStr += getImageSrcByKind(feature);
-	trStr += '" class="obj-img-in-list"/>';
-	trStr += '<label class="obj-name-in-list">';
-	trStr += feature.get('name');
-	trStr += '</label></div>';
-	trStr += '<button class="btn-in-obj-list">';
-	
+	trStr += '<label class="obj-id" style="display: none">' + feature.get('id') + '</label>';
+	trStr += '<label class="obj-kind" style="display: none">' + feature.get('kind') + '</label>';
+
+	trStr += '<div class="obj-item-in-list">';
+	trStr += '<img src="' + getImageSrcByKind(feature) + '" class="obj-img-in-list"/>';
+	trStr += '<label class="obj-name-in-list">' + feature.get('name') + '</label>';
+	trStr += '</div>';
+
+	trStr += '<label class="obj-view-detail-in-list">详情&raquo;</label>';
+
 	var kind = feature.get('kind');
-	if (kind == ObjectKind.DANGER)
-		trStr += 'Start';
-	else if (kind == ObjectKind.VIDEO)
-		trStr += 'View';
-	else if (kind == ObjectKind.RESOURCE)
-		trStr += 'Check';
-	else
-		trStr += 'Detail';
-		
-	trStr += '</button>';
+	if (kind == ObjectKind.DANGER) {
+	    trStr += '<button class="btn-in-obj-list btn btn-primary btn-xs">';
+	    if (kind == ObjectKind.DANGER) {
+	        if (!feature.get('overlay'))
+	            trStr += '事件录入';
+	        else
+	            trStr += '处置';
+	    } else if (kind == ObjectKind.VIDEO)
+	        trStr += '查看视频';
+	    else if (kind == ObjectKind.RESOURCE)
+	        trStr += '检查';
+	    else
+	        trStr += 'Detail';
+	    trStr += '</button>';
+	}
+
 	trStr += '</td></div>';
 	
 	return trStr;
@@ -888,13 +1044,62 @@ function bindObjectListEvents() {
 	$(".obj-in-list").mouseleave(function() {
 		showHighlightedFeatures(null);
 	});
-	
-	$(".obj-item-in-list").click(function() {
-		var id = $(this).parent('div').find('.obj-id').text();
-		
-		var feature = findFeatureById(id);
-		popupFeatureDetail(feature);
+
+	$(".obj-item-in-list").click(function () {
+	    var id = $(this).parent('div').find('.obj-id').text();
+
+	    var feature = findFeatureById(id);
+	    popupFeatureDetail(feature);
 	});
+
+	$(".obj-view-detail-in-list").click(function () {
+	    var id = $(this).parent('div').find('.obj-id').text();
+	    location.href = 'http://dwz.cn/1Vk25z';
+	});
+
+	bindEventInputEvent();
+}
+
+function bindEventInputEvent() {
+    $("#dialog-event-input").dialog({
+        autoOpen: false
+    });
+
+    $('.btn-in-obj-list').click(function (e) {
+        var dangerName = $(this).parent('div').find('.obj-name-in-list').text();
+        var dangerId = $(this).parent('div').find('.obj-id').text();
+
+        if ($(this).text() == "处置") {
+            processDangerEvent(dangerId, function () { updateStatus(); });
+        } else {
+            $("#dialog-event-input").dialog({
+                title: "事件录入",
+                autoOpen: true,
+                resizable: false,
+                modal: true,
+                dialogClass: 'message-dialog',
+                buttons: {
+                    "确认": function () {
+                        var desc = $("#event-description").val();
+                        if (desc != '') {
+                            saveDangerEvent(dangerId, $("#event-description").val(), function () { updateStatus(); });
+                            $(this).dialog("close");
+                        } else {
+                            $("#event-description").focus();
+                        }
+                    },
+                    "取消": function () {
+                        $(this).dialog("close");
+                    }
+                },
+                open: function () {
+                    $(".ui-dialog-titlebar-close").hide();
+                    $("#danger-for-event-input").text("危险源： " + dangerName);
+                    $("#event-description").val('');
+                }
+            });
+        }
+    });
 }
 
 function showFilter(kind) {	
@@ -931,7 +1136,10 @@ function getFeatures(kind) {
 	if (kind < 0 || kind == ObjectKind.DANGER) {
 		var features = gDangerLayerSrc.getFeatures();
 		if (features) {
-			allFeatures = allFeatures.concat(features);
+		    for (var i = 0; i < features.length; i++) {
+		        if (features[i].get('kind') == ObjectKind.DANGER)
+		            allFeatures.push(features[i]);
+		    }
 		}
 	}
 	if (kind < 0 || kind == ObjectKind.VIDEO) {
@@ -970,12 +1178,12 @@ function getFeatures(kind) {
 		}
 		
 		if (gDangerLevelFilterId != -1) {
-			if (fe.get('kind') != 1 || fe.get('level') != gDangerLevelFilterId)
+		    if (fe.get('kind') != ObjectKind.DANGER || fe.get('level') != gDangerLevelFilterId)
 				continue;
 		}
 		
 		if (gDangerTypeFilterId != -1) {
-			if (fe.get('kind') != 1 || fe.get('type') != gDangerTypeFilterId)
+		    if (fe.get('kind') != ObjectKind.DANGER || fe.get('type') != gDangerTypeFilterId)
 				continue;
 		}
 		
@@ -1023,9 +1231,21 @@ function findFeatureById(id) {
 function createStatusTips() {
     var statusStatistic = document.createElement("div");
     statusStatistic.className = 'status-summary-text';
-    statusStatistic.innerHTML = 'Warning: 0';
+    statusStatistic.innerHTML = '警报: 0';
 
     $(statusStatistic).insertBefore("#map");	
+}
+
+function getDangerFeatureById(id) {
+    var features = gDangerLayerSrc.getFeatures();
+    if (features) {
+        for (var i = 0; i <= features.length - 1; i++) {
+            if (features[i].get("id") == id)
+                return features[i];
+        }		
+    }
+
+    return null;
 }
 
 function updateStatus() {
@@ -1033,15 +1253,179 @@ function updateStatus() {
 		var warningCnt = 0;
 		for (var i=0; i<data.length; i++)
   		{
-  			var obj = data[i];
-  			if (obj.status == 1)
-  				warningCnt++;
+		    var obj = data[i];
+  			if (obj.alarm) {
+  			    warningCnt++;
+  			}
+
+  			var fe = getDangerFeatureById(obj.id);
+  			alarmAnimation(fe, obj.alarm);
+  			showEscapeAnimation(obj.id, obj.alarm);
+  			updateDangerButtonText(fe.get('id'), obj.alarm);
   		}
   		
-  		$('.status-summary-text').text('Warning: ' + warningCnt);
+		$('.status-summary-text').text('警报: ' + warningCnt);
   		if (warningCnt == 0)
   			$('.status-summary-text').css({ color: "#000080" });
   		else
   			$('.status-summary-text').css({ color: "red" });
 	});
+}
+
+function showMessage(title, customMessage, funcAfterOKClicked) {
+    $("#dialog-message").html(customMessage);
+    $("#dialog-message").dialog({
+        title: title,
+        modal: true,
+        resizable: false,
+        dialogClass: 'message-dialog',
+        buttons: {
+            "关闭": function () {
+                $(this).dialog("close");
+                if (funcAfterOKClicked)
+                    funcAfterOKClicked();
+            }
+        },
+        open: function () {
+            $(".ui-dialog-titlebar-close").hide();
+        }
+    });
+}
+
+function customConfirm(title, customMessage) {
+    var dfd = new jQuery.Deferred();
+    $("#dialog-confirm").html(customMessage);
+    $("#dialog-confirm").dialog({
+        title: title,
+        resizable: false,
+        modal: true,
+        dialogClass: 'message-dialog',
+        buttons: {
+            "确认": function () {
+                $(this).dialog("close");
+                dfd.resolve(true);
+            },
+            "取消": function () {
+                $(this).dialog("close");
+                dfd.resolve(false);
+            }
+        },
+        open: function () {
+            $(".ui-dialog-titlebar-close").hide();
+        }
+    });
+
+    return dfd.promise();
+}
+
+function createCircleOutOverlay(position) {
+    var elem = document.createElement('div');
+    elem.setAttribute('class', 'circleOut');
+
+    return new ol.Overlay({
+        element: elem,
+        position: position,
+        positioning: 'center-center'
+    });
+}
+
+function updateDangerButtonText(id, hasEvent) {
+    $(".obj-id").each(function (i, obj) {
+        if ($(this).text() == id) {
+            if (hasEvent)
+                $(this).siblings(".btn-in-obj-list").eq(0).text('处置');
+            else
+                $(this).siblings(".btn-in-obj-list").eq(0).text('事件录入');
+        }
+    });
+}
+
+function alarmAnimation(feature, isRun) {
+    if (!feature)
+        return;
+
+    var oly = feature.get('overlay');
+    if (!oly) {
+        if (!isRun)
+            return;
+
+        var coordinates = feature.getGeometry().getCoordinates();
+        var overlay = createCircleOutOverlay(coordinates);
+        gMap.addOverlay(overlay);
+
+        feature.set('overlay', overlay);
+    } else {
+        if (isRun)
+            return;
+
+        gMap.removeOverlay(feature.get('overlay'));
+        feature.set('overlay', null);
+    }
+}
+
+function showEscapeAnimation(danger_id, hasAlarm) {
+    var features = gEscapeRouteLayerSrc.getFeatures();
+    if (features) {
+        for (var i = 0; i < features.length; i++) {
+            var fe = features[i];
+            if (fe.get('danger_id') == danger_id) {
+                if (hasAlarm)
+                    startEscapeAnimation(fe);
+                else
+                    stopEscapeAnimation(fe);
+            }
+        }
+    }
+}
+
+function stopEscapeAnimation(feature) {
+    var timer_id = feature.get('timer_id');
+    if (timer_id === undefined || timer_id === null)
+        return;
+
+    clearInterval(timer_id);
+    feature.set('timer_id', null);
+
+    gMap.removeOverlay(feature.get('animation_marker'));
+    feature.set('animation_marker', null);
+
+    var elm = document.getElementById("animation_element" + feature.get('id'));
+    elm.parentNode.removeChild(elm);
+}
+
+function startEscapeAnimation(feature) {
+    var timer_id = feature.get('timer_id');
+    if (timer_id != undefined && timer_id != null)
+        return;
+
+    var elm = document.createElement("div");
+    elm.className = 'man-run-marker';
+    elm.setAttribute("id", "animation_element" + feature.get('id'));
+    $(elm).insertBefore("#dialog-message");
+
+    var coords = splitLineString(feature.getGeometry(), 100);
+
+    var marker = new ol.Overlay({
+        positioning: 'center-center',
+        offset: [0, 0],
+        element: elm,
+        stopEvent: false
+    });
+
+    gMap.addOverlay(marker);
+    feature.set('animation_marker', marker);
+
+    var i = 0;
+
+    timer_id = setInterval(function () {
+        $('.man-run-marker').removeClass('man-run-marker-pos' + i % 2).addClass('man-run-marker-pos' + (i + 1) % 2);
+        marker.setPosition(coords[i]);
+        i++;
+
+        if (i == coords.length) {
+            i = 0;
+        }
+    }, 50);
+
+    feature.set('timer_id', timer_id);
 }

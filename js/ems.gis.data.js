@@ -3,8 +3,8 @@ function getData(processData) {
 		"dangers": [
 			{
 				"id": 101, 
-				"coord": [ -23376278, 4067916 ],
-				"affect": [ ],
+				"coord": [-23376278, 4067916],
+				"affect": [[[-23377011.05602585, 4067904.596965929], [-23376607.37297022, 4067904.596965929], [-23376822.35211227, 4067555.853024378], [-23377199.75993943, 4067565.4076529136], [-23377011.05602585, 4067904.596965929]]],
 				"level": 1,
 				"type": 1,
 				"name": "水灾"
@@ -12,7 +12,7 @@ function getData(processData) {
 			{
 				"id": 102, 
 				"coord": [ -23376178, 4067716 ],
-				"affect": [ ],
+				"affect": [],
 				"level": 2,
 				"type": 2,
 				"name": "火灾"
@@ -20,7 +20,7 @@ function getData(processData) {
 			{
 				"id": 103, 
 				"coord": [ -23376128, 4067216 ],
-				"affect": [ ],
+				"affect": [],
 				"level": 3,
 				"type": 3,
 				"name": "冰雹"
@@ -28,7 +28,7 @@ function getData(processData) {
 			{
 				"id": 104, 
 				"coord": [ -23375978, 4067316 ],
-				"affect": [ ],
+				"affect": [],
 				"lat": 6178557,
 				"level": 4,
 				"type": 4,
@@ -92,18 +92,21 @@ function getData(processData) {
 		],
 		"escape_routes": [
 			{
-				"id": 501, 
+			    "id": 501,
+                "danger_id": 101,
 				"coord": [ [-23376066, 4067371 ], [ -23376061, 4067436 ], [ -23376295, 4067436 ] ],
 				"name": "逃跑路线一"
 			},
 			{
 				"id": 502, 
-				"coord": [ [-23376666, 4067371 ], [ -23376461, 4067136 ], [ -23376195, 4067236 ] ],
+				"danger_id": 101,
+				"coord": [[-23376666, 4067371], [-23376461, 4067136], [-23376195, 4067236]],
 				"name": "逃跑路线二"
 			},
 			{
 				"id": 503, 
-				"coord": [ [-23376366, 4067371 ], [ -23376761, 4067336 ], [ -23376995, 4067936 ] ],
+				"danger_id": 102,
+				"coord": [[-23376366, 4067371], [-23376761, 4067336], [-23376995, 4067936]],
 				"name": "逃跑路线三"
 			}
 		]
@@ -170,25 +173,44 @@ function updateObjectPosition(id, lon, lat) {
 	alert('Update the object ' + id + ' position to ' + lon, + ', ' + lat);
 }
 
+function getRandomAlarm() {
+    var value = Math.random();
+    if (value < 0.3)
+        return true;
+    return false;
+}
+
+var alarms = [];
+function saveDangerEvent(id, eventDesc, afterSaveFunc) {
+    var found = false;
+
+    for (var i = 0; i < alarms.length; i++) {
+        if (alarms[i].id == id) {
+            alarms[i].alarm = true;
+            found = true;
+            break;
+        }
+    }
+
+    if (!found)
+        alarms.push({ "id": id, "alarm": true });
+
+    afterSaveFunc();
+}
+
+function processDangerEvent(id, afterProcessFunc) {
+    for (var i = 0; i < alarms.length; i++) {
+        if (alarms[i].id == id) {
+            alarms[i].alarm = false;
+            break;
+        }
+    }
+
+    afterProcessFunc();
+}
+
 function getStatus(processStatus) {
-	var data = [
-		{
-			"id": 1, 
-			"status": 0
-		},
-		{
-			"id": 2, 
-			"status": 0
-		},
-		{
-			"id": 3, 
-			"status": 1
-		},
-		{
-			"id": 4, 
-			"status": 2
-		}
-	];
+    var data = alarms;
 	
 	processStatus(data);
 }
@@ -329,14 +351,23 @@ function getFactoryTreeData() {
 	return data;
 }
 
-function addEscapeRoute(id, pts, escapeRouteAddedFunc) {
+function addEscapeRoute(id, coords, escapeRouteAddedFunc) {
 	var data = {
 		"id": id, 
 		"kind": 5,
-		"coord": pts,
+		"coord": coords,
 		"name": "New added escape"
 	};
 	
 	escapeRouteAddedFunc(data);
 }
 
+function updateEscapeRoute(id, coords, updateFinishedFunc) {
+    alert("避灾路线id=" + id + " 坐标更新为" + coords);
+    updateFinishedFunc();
+}
+
+function updateDangerRange(id, coords, updateFinishedFunc) {
+    alert("危险源id=" + id + " 影响范围更新为" + coords);
+    updateFinishedFunc();
+}

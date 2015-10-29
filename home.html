@@ -14,12 +14,14 @@
 		<link rel="stylesheet" href="js/OpenLayers/v3.10.1/css/ol.css" type="text/css">
 		<script src="js/OpenLayers/v3.10.1/build/ol.js"></script>
 		
-		<link rel="stylesheet" href="css/emergency.gis.css" type="text/css">
-		<link rel="stylesheet" href="css/emergency.map.css" type="text/css">
-		<link rel="stylesheet" type="text/css" href="css/emergency.gis.layerswitcher.css">
+		<link rel="stylesheet" href="css/ems.gis.css" type="text/css">
+		<link rel="stylesheet" href="css/ems.map.css" type="text/css">
+		<link rel="stylesheet" type="text/css" href="css/ems.gis.layerswitcher.css">
 		
 		<link rel="stylesheet" href="js/jstree/themes/default/style.min.css" />
 		<script src="js/jstree/jstree.min.js"></script>
+
+        <script src="js/splitLine.js"></script>
 
 		<script src="js/ems.gis.data.js"></script>
 		<script src="js/ems.gis.js"></script>
@@ -32,6 +34,14 @@
 	</head>
 	
 	<body>
+        <div id="dialog-message" title="Info"></div>
+        <div id="dialog-confirm" title="Confirm"></div>
+        <div id="dialog-event-input">
+            <div>
+                <label id="danger-for-event-input"></label>
+            </div>
+            <textarea id="event-description" rows="4" cols="36" placeholder="输入事故描述"></textarea>
+        </div>
 		<div class="gis-area">
 			<div class="region-left-side">
 				<div class="factory-filter">
@@ -47,6 +57,9 @@
 					<button id="btn-region-locate" class="btn btn-primary btn-xs">区域定位</button>
 					<button id="btn-object-locate" class="btn btn-primary btn-xs">对象定位</button>
 					<button id="btn-paint-escaperoute" class="btn btn-primary btn-xs">绘制避灾路线</button>
+                    <button id="btn-modify-escaperoute" class="btn btn-primary btn-xs">修改避灾路线</button>
+                    <button id="btn-paint-danger-range" class="btn btn-primary btn-xs">绘制影响范围</button>
+                    <button id="btn-modify-danger-range" class="btn btn-primary btn-xs">修改影响范围</button>
 				</div>
 				<div id="selected-filter-area">
 					<p id="selected-area-text"></p>

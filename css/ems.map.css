@@ -1,0 +1,282 @@
+#map {
+	height: 100%;
+}
+
+/* Scale line control */	
+.scale-line {
+}
+
+.ol-scale-line {
+	left: 50px;
+}
+
+/* Zoom slider control */
+#map .ol-zoom .ol-zoom-out {
+  	margin-top: 200px;
+}
+#map .ol-zoomslider {
+  	background-color: white;
+  	border: 1px SOLID darkgray;
+  	top: 2.3em;
+  	left: 10px;
+	width: 22px;
+}
+
+#map .ol-zoomslider-thumb {
+	width:20px;
+	margin:0px
+}
+
+#map .ol-touch .ol-zoom .ol-zoom-out {
+  	margin-top: 212px;
+}
+#map .ol-touch .ol-zoomslider {
+  	top: 2.75em;
+}
+
+#map .ol-zoom-in.ol-has-tooltip:hover [role=tooltip],
+#map .ol-zoom-in.ol-has-tooltip:focus [role=tooltip] {
+  	top: 3px;
+}
+
+#map .ol-zoom-out.ol-has-tooltip:hover [role=tooltip],
+#map .ol-zoom-out.ol-has-tooltip:focus [role=tooltip] {
+  	top: 232px;
+}
+
+#map .ol-mouse-position {
+	margin-right: 300px;
+}
+
+.map-control-button {
+    position: absolute;
+    top: 0.5em;
+    text-align:left;
+}
+
+.map-control-button button {
+    width: 22px;
+    height: 22px;
+    text-align: center;
+    background-size: 22px 22px;
+    background-repeat: no-repeat;
+    background-position: 0px;
+    background-color: gray;
+    border: 1px SOLID black;
+}
+
+.box-selection {
+    right: 80px;
+}
+
+.box-selection button {
+    background-image: url('../image/box-selection.jpg');
+    background-position: -2px !important;
+}
+
+.measure-distance {
+    right: 32px;
+}
+
+.measure-distance button {
+    background-image: url('../image/ruler.png');
+}
+
+.ol-touch .measure-distance {
+  top: 80px;
+}
+
+.ol-full-screen button {
+	margin-top: 1px;
+	margin-right: 2px;
+	width: 22px;
+	height: 22px;
+    background-size: 22px 22px;
+    background-repeat: no-repeat;
+    background-position: -1px;
+    background-color: white;
+    border: 1px SOLID black;
+	background-image: url('../image/fullscreen.png');
+}
+
+.ol-full-screen button:hover {
+	background-color: white;
+}
+
+.measure-area {
+    right: 56px;
+}
+
+.measure-area button {
+	background-color: white;
+    background-image: url('../image/measure-area.png');
+}
+
+.measure-area button:hover {
+	background-color: white;
+}
+
+.ol-touch .measure-area {
+  top: 80px;
+}
+
+.status-tips {
+	position: absolute; 
+	bottom: 0; 
+	left: 0.5em; 
+	width: 400px; 
+}
+
+.tooltip {
+	position: relative;
+	background: rgba(0, 0, 0, 0.5);
+	border-radius: 4px;
+	color: white;
+	padding: 4px 8px;
+	opacity: 0.7;
+	white-space: nowrap;
+}
+
+.tooltip-measure {
+	opacity: 1;
+	font-weight: bold;
+}
+
+.tooltip-static {
+	background-color: #ffcc33;
+	color: black;
+	border: 1px solid white;
+}
+
+.tooltip-measure:before,
+.tooltip-static:before {
+	border-top: 6px solid rgba(0, 0, 0, 0.5);
+	border-right: 6px solid transparent;
+	border-left: 6px solid transparent;
+	content: "";
+	position: absolute;
+	bottom: -6px;
+	margin-left: -7px;
+	left: 50%;
+}
+
+.tooltip-static:before {
+	border-top-color: #ffcc33;
+}
+
+.tooltip-measure-result {
+}
+
+
+.circleOut {
+    position: relative;
+    margin: 0 auto;
+    padding: 0;
+    width: 0;
+    height: 0;
+}
+
+.circleOut:before {
+    position: relative;
+    top: -3em;
+    left: -2.5em;
+    display: block;
+    -moz-box-sizing: border-box;
+         box-sizing: border-box;
+    margin: 0 auto;
+    width: 6em;
+    height: 6em;
+    border: 0.4em solid red;              
+    border-radius: 100%;
+    content: "";
+    -webkit-transform-origin: center;
+        -ms-transform-origin: center;
+            transform-origin: center;
+    -webkit-animation-name: fadeOut;
+            animation-name: fadeOut;
+    -webkit-animation-duration: 1s;
+            animation-duration: 1s;
+    -webkit-animation-timing-function: ease-in-out;
+            animation-timing-function: ease-in-out;
+    -webkit-animation-delay: -1s;
+            animation-delay: -1s;
+    -webkit-animation-iteration-count: infinite;
+            animation-iteration-count: infinite;
+    -webkit-animation-direction: forwards;
+            animation-direction: forwards;
+}
+
+.circleOut:after {
+    position: absolute;
+    top: -3em;
+    left: -2.5em;
+    display: block;
+    -moz-box-sizing: border-box;
+         box-sizing: border-box;
+    margin: 0 auto;
+    width: 6em;
+    height: 6em;
+    border: 0.2em solid red;
+    border-radius: 100%;
+    content: "";
+    -webkit-transform-origin: center;
+        -ms-transform-origin: center;
+            transform-origin: center;
+    -webkit-animation-name: fadeOut;
+            animation-name: fadeOut;
+    -webkit-animation-duration: 1s;
+            animation-duration: 1s;
+    -webkit-animation-timing-function: ease;
+            animation-timing-function: ease;
+    -webkit-animation-delay: -.5s;
+            animation-delay: -.5s;
+    -webkit-animation-iteration-count: infinite;
+            animation-iteration-count: infinite;
+    -webkit-animation-direction: forwards;
+            animation-direction: forwards;
+}
+
+@-webkit-keyframes fadeOut {
+  0% {
+        -webkit-transform: scale(0);
+              transform: scale(0);
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        -webkit-transform: scale(1);
+              transform: scale(1);
+        opacity: 0;
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        -webkit-transform: scale(0);
+              transform: scale(0);
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        -webkit-transform: scale(1);
+              transform: scale(1);
+        opacity: 0;
+    }
+}
+
+.man-run-marker {
+    width: 20px; 
+    height: 20px;
+    background-size: 20px 20px;
+	background-repeat: no-repeat;
+}
+
+.man-run-marker-pos0 {
+	background-image:url("../image/man-run-1.png");
+}
+
+.man-run-marker-pos1 {
+	background-image:url("../image/man-run-2.png");
+}
