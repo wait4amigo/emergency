@@ -9,6 +9,13 @@ var gTimerId = null;
 
 var gDangerLevelFilterId = -1;
 var gDangerTypeFilterId = -1;
+var gHarzadousUsageFilterId = -1;
+var gHarzadousRiskFilterId = -1;
+var gVideoAreaFilterId = -1;
+var gResourceTypeFilterId = -1;
+var gEscapeRouteFilterId = -1;
+var gDangerForResourceFilterId = -1;
+var gDangerForEscapeRouteFilterId = -1;
 
 var ObjectKind = {
 	NONE: -1,
@@ -535,14 +542,25 @@ function popupFeatureDetail(feature) {
 		});
 		gMap.addOverlay(popup);
 
+		var id = feature.get('id');
 		var toPopId = '#' + toPopupForm;
-		//if (!$(toPopId).is(":visible"))
-		//	$('.detail-form').not(toPopId).hide();
-			
-		$('.detail-form').hide();
-		$(toPopId).slideToggle({ direction: "up" }, 300);
+
+		var oldId = $('.detail-form').data('id');
+		if ($('.detail-form').is(":visible")) {
+		    if (id != oldId) {
+		        $('.detail-form').hide();
+		        $(toPopId).slideToggle({ direction: "up" }, 300);
+		    } else {
+		        $(toPopId).slideToggle({ direction: "up" }, 300);
+		    }
+		} else {
+		    $(toPopId).slideToggle({ direction: "up" }, 300);
+		}
+
+		$('.detail-form').data('id', id);
 	} else {
-		$('.detail-form').hide();
+        $('.detail-form').data('id', '');
+        $('.detail-form').hide();
 	}
 }
 
@@ -937,7 +955,9 @@ function showObjectLayers(kind) {
 }
 
 function bindObjectTypeClickEvent() {
-	$("#danger-object-group").click(function(){
+    $("#danger-object-group").click(function () {
+        clearAllFilterId();
+
 		if (gSelectedType == ObjectKind.DANGER)
 			gSelectedType = ObjectKind.NONE;
 		else
@@ -947,7 +967,9 @@ function bindObjectTypeClickEvent() {
 	});
 	
 	$("#video-object-group").click(function(){
-		if (gSelectedType == ObjectKind.VIDEO)
+	    clearAllFilterId();
+
+	    if (gSelectedType == ObjectKind.VIDEO)
 			gSelectedType = ObjectKind.NONE;
 		else
 			gSelectedType = ObjectKind.VIDEO;
@@ -956,7 +978,9 @@ function bindObjectTypeClickEvent() {
 	});
 	
 	$("#resource-object-group").click(function(){
-		if (gSelectedType == ObjectKind.RESOURCE)
+	    clearAllFilterId();
+
+	    if (gSelectedType == ObjectKind.RESOURCE)
 			gSelectedType = ObjectKind.NONE;
 		else
 			gSelectedType = ObjectKind.RESOURCE;
@@ -965,7 +989,9 @@ function bindObjectTypeClickEvent() {
 	});
 	
 	$("#harzadous-object-group").click(function(){
-		if (gSelectedType == ObjectKind.HARZADOUS)
+	    clearAllFilterId();
+
+	    if (gSelectedType == ObjectKind.HARZADOUS)
 			gSelectedType = ObjectKind.NONE;
 		else
 			gSelectedType = ObjectKind.HARZADOUS;
@@ -974,7 +1000,9 @@ function bindObjectTypeClickEvent() {
 	});
 	
 	$("#escaperoute-object-group").click(function(){
-		if (gSelectedType == ObjectKind.ESCAPEROUTE)
+	    clearAllFilterId();
+
+	    if (gSelectedType == ObjectKind.ESCAPEROUTE)
 			gSelectedType = ObjectKind.NONE;
 		else
 			gSelectedType = ObjectKind.ESCAPEROUTE;
@@ -1108,7 +1136,7 @@ function showFilter(kind) {
 	if (kind < 0) {
 		$('#filter-danger-src').show();
 	}
-	
+
 	if (kind == ObjectKind.DANGER) {
 		$('#filter-danger-src').show();
 	}	
@@ -1130,7 +1158,7 @@ function getFeatures(kind) {
 	showObjectLayers(gSelectedType);
 	setObjectTypeHightlight(kind);
 	showFilter(kind);
-		
+
 	var allFeatures = [];
 
 	if (kind < 0 || kind == ObjectKind.DANGER) {
@@ -1144,27 +1172,23 @@ function getFeatures(kind) {
 	}
 	if (kind < 0 || kind == ObjectKind.VIDEO) {
 		var features = gVideoLayerSrc.getFeatures();
-		if (features) {
+		if (features)
 			allFeatures = allFeatures.concat(features);
-		}
 	}
 	if (kind < 0 || kind == ObjectKind.RESOURCE) {
 		var features = gResourceLayerSrc.getFeatures();
-		if (features) {
+		if (features)
 			allFeatures = allFeatures.concat(features);
-		}
 	}
 	if (kind < 0 || kind == ObjectKind.HARZADOUS) {
 		var features = gHarzadousLayerSrc.getFeatures();
-		if (features) {
+		if (features)
 			allFeatures = allFeatures.concat(features);
-		}
 	}
 	if (kind < 0 || kind == ObjectKind.ESCAPEROUTE) {
 		var features = gEscapeRouteLayerSrc.getFeatures();
-		if (features) {
+		if (features)
 			allFeatures = allFeatures.concat(features);
-		}
 	}
 	
 	var filter = $("#object-name-filter").val().trim();
@@ -1176,21 +1200,51 @@ function getFeatures(kind) {
 		if (filter && fe.get('name').indexOf(filter) <= -1) {
 			continue;
 		}
-		
-		if (gDangerLevelFilterId != -1) {
-		    if (fe.get('kind') != ObjectKind.DANGER || fe.get('level') != gDangerLevelFilterId)
-				continue;
-		}
-		
-		if (gDangerTypeFilterId != -1) {
-		    if (fe.get('kind') != ObjectKind.DANGER || fe.get('type') != gDangerTypeFilterId)
-				continue;
-		}
-		
+
+		if (isFeatureFiltered(fe, fe.get('level'), gDangerLevelFilterId, ObjectKind.DANGER))
+		    continue;
+
+		if (isFeatureFiltered(fe, fe.get('type'), gDangerTypeFilterId, ObjectKind.DANGER))
+		    continue;
+
+		if (isFeatureFiltered(fe, fe.get('usage_id'), gHarzadousUsageFilterId, ObjectKind.HARZADOUS))
+		    continue;
+
+		if (isFeatureFiltered(fe, fe.get('risk_id'), gHarzadousRiskFilterId, ObjectKind.HARZADOUS))
+		    continue;
+
+		if (isFeatureFiltered(fe, fe.get('zone'), gVideoAreaFilterId, ObjectKind.VIDEO))
+		    continue;
+
+		if (isFeatureFiltered(fe, fe.get('type'), gResourceTypeFilterId, ObjectKind.RESOURCE))
+		    continue;
+
+		if (isFeatureFiltered(fe, fe.get('danger_id'), gDangerForResourceFilterId, ObjectKind.RESOURCE))
+		    continue;
+
+		if (isFeatureFiltered(fe, fe.get('level'), gEscapeRouteFilterId, ObjectKind.ESCAPEROUTE))
+		    continue;
+
+		if (isFeatureFiltered(fe, fe.get('danger_id'), gDangerForEscapeRouteFilterId, ObjectKind.ESCAPEROUTE))
+		    continue;
+
 		tmpFeatures.push(fe);
 	}
 
 	showFeaturesList(tmpFeatures);
+}
+
+function isFeatureFiltered(feature, id, filterId, targetKind) {
+    if (filterId == -1)
+        return false;
+
+    if (feature.get('kind') != targetKind)
+        return true;
+
+    if (id != filterId)
+        return true;
+
+    return false;
 }
 
 function findFeatureAux(features, id) {

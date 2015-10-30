@@ -361,6 +361,10 @@ html,body {
     outline-width: 0; 
 }
 
+#filter-danger-src button {
+    float: left;
+}
+
 .filter-list {
     /* Size and position */
     position: relative; /* Enable absolute positionning for children and pseudo elements */

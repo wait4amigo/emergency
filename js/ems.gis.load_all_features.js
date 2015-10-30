@@ -16,7 +16,8 @@ function addObjects(data) {
 function addDangers(data) {
 	if (!data)
 		return;
-		
+	
+	var dangers_for_filter = [];
 	var fes = [];	
 	for (var i = 0; i < data.length; i++) {
 	    var obj = data[i];
@@ -47,7 +48,11 @@ function addDangers(data) {
 
   		setFeatureStyle(fe, false);
   		fes.push(fe);
-    }
+
+  		dangers_for_filter.push({ 'type_id': obj.id, 'type_name': obj.name });
+	}
+
+	applyDangerFilter(dangers_for_filter);
 	
 	gDangerLayerSrc.addFeatures(fes);
 }
@@ -63,8 +68,7 @@ function addVideos(data) {
 			geometry: new ol.geom.Point(obj.coord),
 			name: obj.name,
 			kind: ObjectKind.VIDEO,
-			type: obj.type,
-			area: obj.area,
+			zone: obj.zone,
 			id: obj.id
 		});
 		
@@ -86,7 +90,9 @@ function addResources(data) {
 			geometry: new ol.geom.Point(obj.coord),
 			name: obj.name,
 			kind: ObjectKind.RESOURCE,
-			id: obj.id
+			id: obj.id,
+			type: obj.type,
+			danger_id: obj.danger_id
 		});
 		
 		setFeatureStyle(fe, false);
@@ -108,7 +114,9 @@ function addHarzadous(data) {
 			geometry: new ol.geom.Point(obj.coord),
 			name: obj.name,
 			kind: ObjectKind.HARZADOUS,
-			id: obj.id
+			id: obj.id,
+			usage_id: obj.usage_id,
+            risk_id: obj.risk_id
 		});
 		
 		setFeatureStyle(fe, false);

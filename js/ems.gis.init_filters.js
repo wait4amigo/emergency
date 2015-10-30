@@ -12,63 +12,130 @@ function initFilters() {
 	getFilterConfig(applyConfig);
 }
 
+function applyDangerFilter(dangers) {
+    addFilter('resource_danger_item', 'filter-resource-danger', dangers, function (id) {
+        var tmp = gResourceTypeFilterId;
+        clearAllFilterId();
+
+        gDangerForResourceFilterId = id;
+        gResourceTypeFilterId = tmp;
+
+        getFeatures(gSelectedType);
+    });
+    
+    addFilter('escape_route_danger_item', 'filter-escape-route-danger', dangers, function (id) {
+        clearAllFilterId();
+
+        gDangerForEscapeRouteFilterId = id;
+
+        getFeatures(gSelectedType);
+    });
+}
+
+function clearAllFilterId() {
+    gDangerLevelFilterId = -1;
+    gDangerTypeFilterId = -1;
+    gHarzadousUsageFilterId = -1;
+    gHarzadousRiskFilterId = -1;
+    gVideoAreaFilterId = -1;
+    gResourceTypeFilterId = -1;
+    gEscapeRouteFilterId = -1;
+    gDangerForResourceFilterId = -1;
+    gDangerForEscapeRouteFilterId = -1;
+}
+
 function applyConfig(conf) {
-	addDangerLevels(conf.danger_levels);
-	addDangerTypes(conf.danger_types);
+    addFilter('danger_level_item', 'filter-danger-level', conf.danger_levels, function (id) {
+        var tmp = gDangerTypeFilterId;
+        clearAllFilterId();
+
+        gDangerLevelFilterId = id;
+        gDangerTypeFilterId = tmp;
+
+        getFeatures(gSelectedType);
+    });
+
+    addFilter('danger_type_item', 'filter-danger-type', conf.danger_types, function (id) {
+        var tmp = gDangerLevelFilterId;
+        clearAllFilterId();
+
+        gDangerTypeFilterId = id;
+        gDangerLevelFilterId = tmp;
+
+        getFeatures(gSelectedType);
+    });
+
+    addFilter('harzadous_usage_item', 'filter-harzadous-usage', conf.harzadous_usage, function (id) {
+        var tmp = gHarzadousRiskFilterId;
+        clearAllFilterId();
+
+        gHarzadousUsageFilterId = id;
+        gHarzadousRiskFilterId = tmp;
+
+        getFeatures(gSelectedType);
+    });
+
+    addFilter('harzadous_risk_item', 'filter-harzadous-risk', conf.harzadous_risk, function (id) {
+        var tmp = gHarzadousUsageFilterId;
+        clearAllFilterId();
+
+        gHarzadousRiskFilterId = id;
+        gHarzadousUsageFilterId = tmp;
+
+        getFeatures(gSelectedType);
+    });
+
+    addFilter('video_area_item', 'filter-video-area', conf.video_zone, function (id) {
+        clearAllFilterId();
+        gVideoAreaFilterId = id;
+
+        getFeatures(gSelectedType);
+    });
+
+    //addFilter('video_type_item', 'filter-video-type', conf.harzadous_risk, function (id) {
+    //});
+
+    addFilter('resource_type_item', 'filter-resource-type', conf.resource_type, function (id) {
+        var tmp = gDangerForResourceFilterId;
+        clearAllFilterId();
+
+        gResourceTypeFilterId = id;
+        gDangerForResourceFilterId = tmp;
+
+        getFeatures(gSelectedType);
+    });
+
+    /*addFilter('escape_route_type_item', 'filter-escape-route-type', conf.escape_route_type, function (id) {
+        gDangerFilterId = id;
+        getFeatures(gSelectedType);
+    });*/
 }
-        
-function addDangerLevels(levels) {
-	var content = ''
-	
-	for (var i = 0; i < levels.length; i++) {
-		content += '<li>';
-		content += '<a class="danger_level_item" href="#">'; 
-		content += levels[i].level_name;
-		content += '</a>';
-		content += '<label style="display: none">';
-		content += levels[i].level_id;
-		content += '</label>';
-		content += '</li>'; 
-	}
 
-	$("#filter-danger-level ul").append(content);
-	
-	$("#filter-danger-level").click(function() {
-		$("#filter-danger-type").removeClass('active');
-	});
-	
-	$('.danger_level_item').click(function() {
-		gDangerLevelFilterId = $(this).siblings("label").text();		
-		getFeatures(gSelectedType);
-	});
-}
 
-function addDangerTypes(types) {
-	var content = ''
-	
-	for (var i = 0; i < types.length; i++) {
-		content += '<li>';
-		content += '<a class="danger_type_item" href="#">'; 
-		content += types[i].type_name;
-		content += '</a>';
-		content += '<label style="display: none">';
-		content += types[i].type_id;
-		content += '</label>';
-		content += '</li>'; 
-	}
+function addFilter(class_name, list_name, data, onClick) {
+    var content = ''
 
-	$("#filter-danger-type ul").append(content);
-	
-	$("#filter-danger-type").click(function() {
-		$("#filter-danger-level").removeClass('active');
-	});
-	
-	$('.danger_type_item').click(function() {
-		gDangerTypeFilterId = $(this).siblings("label").text();
-		$("#danger-type-filter-text").text($(this).text());
-		
-		getFeatures(gSelectedType);
-	});
+    for (var i = 0; i < data.length; i++) {
+        content += '<li>';
+        content += '<a class="' + class_name + '" href="#">';
+        content += data[i].type_name;
+        content += '</a>';
+        content += '<label style="display: none">';
+        content += data[i].type_id;
+        content += '</label>';
+        content += '</li>';
+    }
+
+    $('#' + list_name + ' ul').append(content);
+
+    $('#' + list_name).click(function () {
+        $('.filter-list').not(this).removeClass('active');
+    });
+
+    $('.' + class_name).click(function () {
+        $('#' + list_name + ' span').text($(this).text());
+        onClick($(this).siblings("label").text());
+    });
 }
 
 function initObjectFilter() {
@@ -89,7 +156,7 @@ function initDangerFilters() {
 
 function initVideoFilters() {
 	var v1 = new DropDown( $('#filter-video-area') );
-	var v2 = new DropDown( $('#filter-video-type') );
+	//var v2 = new DropDown( $('#filter-video-type') );
 }
 
 function initHarzadousFilters() {
@@ -103,7 +170,7 @@ function initResourceFilters() {
 }
 
 function initEscapeRouteFilters() {
-	var v1 = new DropDown( $('#filter-escape-route-type') );
+	//var v1 = new DropDown( $('#filter-escape-route-type') );
 	var v2 = new DropDown( $('#filter-escape-route-danger') );
 }
 
@@ -116,8 +183,7 @@ function initFilterText() {
 		$('#filter-danger-level span').text('危险级别');
 		$('#filter-danger-type span').text('危险类型');
 		
-		gDangerLevelFilterId = -1;
-		gDangerTypeFilterId = -1;
+		clearAllFilterId();
 		
 		getFeatures(gSelectedType);
 	});
@@ -125,28 +191,36 @@ function initFilterText() {
 	$('#filter-harzadous button').click(function() {
 		$('#filter-harzadous-usage span').text('用途');
 		$('#filter-harzadous-risk span').text('危险性');
-		
+
+		clearAllFilterId();
+
 		getFeatures(gSelectedType);
 	});
 	
 	$('#filter-video button').click(function() {
 		$('#filter-video-area span').text('视频区域');
-		$('#filter-video-type span').text('视频类型');
-		
+		//$('#filter-video-type span').text('视频类型');
+
+		clearAllFilterId();
+
 		getFeatures(gSelectedType);
 	});
 	
 	$('#filter-resource button').click(function() {
 		$('#filter-resource-type span').text('物资类型');
-		$('#filter-resource-danger span').text('关联危险');
-		
+		$('#filter-resource-danger span').text('关联危险源');
+
+		clearAllFilterId();
+
 		getFeatures(gSelectedType);
 	});
 	
 	$('#filter-escape-route button').click(function() {
-		$('#filter-escape-route-type span').text('路线类型');
-		$('#filter-escape-route-danger span').text('危险类型');
-		
+		//$('#filter-escape-route-type span').text('路线类型');
+	    $('#filter-escape-route-danger span').text('关联危险源');
+
+		clearAllFilterId();
+
 		getFeatures(gSelectedType);
 	});
 }

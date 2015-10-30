@@ -39,54 +39,66 @@ function getData(processData) {
 			{
 				"id": 201, 
 				"coord": [ -23375916, 4067883 ],
-				"type": 1,
-				"area": 1,
+				"zone": 1,
 				"name": "视频一"
 			},
 			{
 				"id": 202, 
 				"coord": [ -23375853, 4067945 ],
-				"type": 2,
-				"area": 2,
+				"zone": 2,
 				"name": "视频二"
 			}
 		],
 		"resources": [
 			{
 				"id": 301, 
-				"coord": [ -23376433, 4067945 ],
+				"coord": [-23376433, 4067945],
+				"type": 1,
+                "danger_id": 101,
 				"name": "水泥"
 			},
 			{
 				"id": 302, 
 				"coord": [ -23376173, 4067145 ],
+				"type": 2,
+				"danger_id": 102,
 				"name": "黄沙"
 			},
 			{
 				"id": 303, 
 				"coord": [ -23376133, 4067245 ],
+				"type": 1,
+				"danger_id": 101,
 				"name": "混凝土"
 			}
 		],
 		"harzadous": [
 			{
 				"id": 401, 
-				"coord": [ -23375658, 4066904 ],
+				"coord": [-23375658, 4066904],
+				"usage_id": 1,
+				"risk_id": 1,
 				"name": "硫酸"
 			},
 			{
 				"id": 402, 
 				"coord": [ -23375718, 4067904 ],
+				"usage_id": 1,
+				"risk_id": 2,
 				"name": "液氧"
 			},
 			{
 				"id": 403, 
 				"coord": [ -23375958, 4067104 ],
+				"usage_id": 2,
+				"risk_id": 3,
 				"name": "电石"
 			},
 			{
 				"id": 404, 
 				"coord": [ -23375818, 4067304 ],
+				"usage_id": 3,
+				"risk_id": 4,
 				"name": "炉气"
 			}
 		],
@@ -219,24 +231,24 @@ function getFilterConfig(applyConfig) {
 	var data = {
 		'danger_levels': [
 			{ 
-				'level_id': 1,
-				'level_name': "一级",
-				'level_desc': "一级重大危险源"
+			    'type_id': 1,
+			    'type_name': "一级",
+				'type_desc': "一级重大危险源"
 			},
 			{
-				'level_id': 2,
-				'level_name': "二级",
-				'level_desc': "二级重大危险源"
+			    'type_id': 2,
+			    'type_name': "二级",
+			    'type_desc': "二级重大危险源"
 			},
 			{
-				'level_id': 3,
-				'level_name': "三级",
-				'level_desc': "三级重大危险源"
+			    'type_id': 3,
+			    'type_name': "三级",
+			    'type_desc': "三级重大危险源"
 			},
 			{
-				'level_id': 4,
-				'level_name': "四级",
-				'level_desc': "四级重大危险源"
+			    'type_id': 4,
+			    'type_name': "四级",
+			    'type_desc': "四级重大危险源"
 			}
 		],
 		'danger_types': [
@@ -293,17 +305,7 @@ function getFilterConfig(applyConfig) {
 				'type_name': "国家重点监管"
 			}
 		],
-		'escape-route-type': [
-			{ 
-				'type_id': 1,
-				'type_name': "全局"
-			},
-			{
-				'type_id': 2,
-				'type_name': "关联危险源"
-			}
-		],
-		'resource-type': [
+		'resource_type': [
 			{ 
 				'type_id': 1,
 				'type_name': "消防车"
@@ -315,6 +317,20 @@ function getFilterConfig(applyConfig) {
 			{
 				'type_id': 3,
 				'type_name': "防化服"
+			}
+		],
+		'video_zone': [
+			{
+			    'type_id': 1,
+			    'type_name': "区域一"
+			},
+			{
+			    'type_id': 2,
+			    'type_name': "区域二"
+			},
+			{
+			    'type_id': 3,
+			    'type_name': "区域三"
 			}
 		]
 	};
