@@ -3,19 +3,19 @@ function getData(processData) {
 		"dangers": [
 			{
 				"id": 101, 
-				"coord": [-23376278, 4067916],
-				"affect": [[[-23377011.05602585, 4067904.596965929], [-23376607.37297022, 4067904.596965929], [-23376822.35211227, 4067555.853024378], [-23377199.75993943, 4067565.4076529136], [-23377011.05602585, 4067904.596965929]]],
+				"coord": [-23375685, 4067791],
+				"affect": [[[-23375707.14781288,4067815.47019662], [-23375651.611534517,4067832.787960841], [-23375633.69660601,4067826.2191537223], [-23375633.995188154,4067766.204143233], [-23375707.44639502,4067756.6495146975], [-23375742.679087747,4067777.550264619], [-23375737.603191335,4067804.4226573757], [-23375729.840055652,4067809.1999716433], [-23375707.14781288,4067815.47019662]]],
 				"level": 1,
 				"type": 1,
-				"name": "水灾"
+				"name": "燃气泄漏"
 			},
 			{
 				"id": 102, 
-				"coord": [ -23376178, 4067716 ],
-				"affect": [],
+				"coord": [ -23375934, 4067671 ],
+				"affect": [[[-23376020.957643844,4067683.3475989006], [-23375914.0652371,4067746.049848666], [-23375832.850894548,4067770.5335842883], [-23375827.476416,4067620.6453491356], [-23375863.306273006,4067611.687884883], [-23375994.682415374,4067611.0907206], [-23376020.957643844,4067683.3475989006]]],
 				"level": 2,
 				"type": 2,
-				"name": "火灾"
+				"name": "甲醇储罐、丙烯储罐"
 			},
 			{
 				"id": 103, 
@@ -23,7 +23,7 @@ function getData(processData) {
 				"affect": [],
 				"level": 3,
 				"type": 3,
-				"name": "冰雹"
+				"name": "VCM转化区"
 			},
 			{
 				"id": 104, 
@@ -32,19 +32,19 @@ function getData(processData) {
 				"lat": 6178557,
 				"level": 4,
 				"type": 4,
-				"name": "龙卷风"
+				"name": "电石冷却库"
 			}
 		],
 		"videos": [
 			{
 				"id": 201, 
-				"coord": [ -23375916, 4067883 ],
+				"coord": [ -23375721, 4067816 ],
 				"zone": 1,
 				"name": "视频一"
 			},
 			{
 				"id": 202, 
-				"coord": [ -23375853, 4067945 ],
+				"coord": [ -23375916, 4067707 ],
 				"zone": 2,
 				"name": "视频二"
 			}
@@ -52,40 +52,40 @@ function getData(processData) {
 		"resources": [
 			{
 				"id": 301, 
-				"coord": [-23376433, 4067945],
+				"coord": [-23375811, 4067658],
 				"type": 1,
                 "danger_id": 101,
-				"name": "水泥"
+				"name": "黄沙"
 			},
 			{
 				"id": 302, 
 				"coord": [ -23376173, 4067145 ],
 				"type": 2,
 				"danger_id": 102,
-				"name": "黄沙"
+				"name": "水泥"
 			},
 			{
 				"id": 303, 
-				"coord": [ -23376133, 4067245 ],
+				"coord": [ -23375972, 4067686 ],
 				"type": 1,
 				"danger_id": 101,
-				"name": "混凝土"
+				"name": "灭火器、消防栓"
 			}
 		],
 		"harzadous": [
 			{
 				"id": 401, 
-				"coord": [-23375658, 4066904],
+				"coord": [-23375963, 4067641],
 				"usage_id": 1,
 				"risk_id": 1,
-				"name": "硫酸"
+				"name": "甲醇、丙烯"
 			},
 			{
 				"id": 402, 
-				"coord": [ -23375718, 4067904 ],
+				"coord": [ -23375726, 4067786 ],
 				"usage_id": 1,
 				"risk_id": 2,
-				"name": "液氧"
+				"name": "液化天然气"
 			},
 			{
 				"id": 403, 
@@ -105,21 +105,21 @@ function getData(processData) {
 		"escape_routes": [
 			{
 			    "id": 501,
-                "danger_id": 101,
-				"coord": [ [-23376066, 4067371 ], [ -23376061, 4067436 ], [ -23376295, 4067436 ] ],
-				"name": "逃跑路线一"
+                "danger_id": 102,
+				"coord": [[-23375929.591508474,4067671.2550221593], [-23375885.99851578,4067671.852186443], [-23375885.401351497,4067707.0848791683], [-23375811.65156249,4067706.487714885], [-23375812.547308907,4067838.610312604]],
+				"name": "甲醇事故撤离路线一"
 			},
 			{
 				"id": 502, 
-				"danger_id": 101,
-				"coord": [[-23376666, 4067371], [-23376461, 4067136], [-23376195, 4067236]],
-				"name": "逃跑路线二"
+				"danger_id": 102,
+				"coord": [[-23375945.714944128,4067666.776290033], [-23375945.416361984,4067644.084047261], [-23375992.59234038,4067644.9797936864], [-23375990.502265386,4067601.685383134], [-23376043.351304475,4067604.6712045516], [-23376043.351304475,4067753.962275421]],
+				"name": "甲醇事故撤离路线二"
 			},
 			{
 				"id": 503, 
-				"danger_id": 102,
-				"coord": [[-23376366, 4067371], [-23376761, 4067336], [-23376995, 4067936]],
-				"name": "逃跑路线三"
+				"danger_id": 101,
+				"coord": [[-23375679.97683798,4067790.240005642], [-23375621.4547382,4067790.8371699257], [-23375623.24623105,4067737.0923844124], [-23375476.940981597,4067738.2867129794]],
+				"name": "燃气泄漏撤离路线"
 			}
 		]
 	};
@@ -166,13 +166,24 @@ function getHarzadousInfo(id, processHarzadousInfo) {
 }
 
 function saveRegionLocationInfo(id, lon, lat, zoom) {
-	alert('Saved region id=' + id + ' lon=' + lon + ' lat=' + lat + ' zoom=' + zoom);
+	//alert('Saved region id=' + id + ' lon=' + lon + ' lat=' + lat + ' zoom=' + zoom);
 }
 
 function getMapConfig() {
 	var data = {
-		"base_map_layers": [ { "name": "厂区", "layers": "emergency", "url": "http://localhost:8090/iserver/services/map-Emergency/wms111/emergency" } ],
-		"center": { "lon": -23375968, "lat": 4067441 },
+	    "base_map_layers": [
+            {
+	            "name": "工厂",
+	            "layers": "emergency",
+	            "url": "http://localhost:8090/iserver/services/map-Emergency/wms111/emergency",
+                "visible_on_resolution": 2.0
+	        }
+	    ],
+	    "center":
+        {
+            "lon": -23375968,
+            "lat": 4067441
+        },
 		"zoom": 17,
 		"minZoom": 16,
 		"maxZoom": 22
@@ -182,7 +193,7 @@ function getMapConfig() {
 }
 
 function updateObjectPosition(id, lon, lat) {
-	alert('Update the object ' + id + ' position to ' + lon, + ', ' + lat);
+	//alert('Update the object ' + id + ' position to ' + lon, + ', ' + lat);
 }
 
 function getRandomAlarm() {
@@ -368,6 +379,7 @@ function getFactoryTreeData() {
 }
 
 function addEscapeRoute(id, coords, escapeRouteAddedFunc) {
+	showMessage("", coords, null);
 	var data = {
 		"id": id, 
 		"kind": 5,
@@ -380,11 +392,11 @@ function addEscapeRoute(id, coords, escapeRouteAddedFunc) {
 }
 
 function updateEscapeRoute(id, coords, updateFinishedFunc) {
-    alert("避灾路线id=" + id + " 坐标更新为" + coords);
+    //alert("避灾路线id=" + id + " 坐标更新为" + coords);
     updateFinishedFunc();
 }
 
 function updateDangerRange(id, coords, updateFinishedFunc) {
-    alert("危险源id=" + id + " 影响范围更新为" + coords);
+    //alert("危险源id=" + id + " 影响范围更新为" + coords);
     updateFinishedFunc();
 }

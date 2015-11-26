@@ -1,4 +1,5 @@
 var gMap;
+var gBaseMapGroup;
 var gVideoLayer, gResourceLayer, gDangerLayer, gHarzadousLayer, gEscapeRouteLayer;
 var gVideoLayerSrc, gResourceLayerSrc, gDangerLayerSrc, gHarzadousLayerSrc, gEscapeRouteLayerSrc;
 var gHoveredFeature;
@@ -48,6 +49,7 @@ $(document).ready(function(){
 	if (mode && mode == "edit") {
 		$(".obj-list-area").css({ top: '255px' });
 		$("#edit-area").show();
+		createEditInfo();
 	}
 	else
 		$("#edit-area").hide();
@@ -824,7 +826,7 @@ function getLayerVector(layerTitle, vectorSource, isEscapeLine) {
 }
 
 function createMap() {
-    var baseMapGroup = new ol.layer.Group({
+    gBaseMapGroup = new ol.layer.Group({
 		title: '»ù´¡Í¼²ã',
         layers: []
     });
@@ -834,12 +836,13 @@ function createMap() {
 	for (var i = 0; i < configData.base_map_layers.length; i++) {
 		var ly = configData.base_map_layers[i];
 		
-		baseMapGroup.getLayers().push(new ol.layer.Tile({
+		gBaseMapGroup.getLayers().push(new ol.layer.Tile({
 			title: ly.name,
 			source: new ol.source.TileWMS({
 				url: ly.url,
 				params: {'LAYERS': ly.layers, 'TILED': true}
-			  })
+			}),
+			visible_on_resolution: ly.visible_on_resolution
 		}));
 	}
     
@@ -878,7 +881,7 @@ function createMap() {
 	   
 	gMap = new ol.Map({
 		layers: [
-			baseMapGroup,
+			gBaseMapGroup,
 			emergencyGroup
 		],
 		interactions: ol.interaction.defaults({ 
@@ -898,7 +901,7 @@ function createMap() {
 			}),
 			new ol.control.OverviewMap({
 				layers: [
-					baseMapGroup
+					gBaseMapGroup
 				]
 			}),
 			new ol.control.LayerSwitcher(),
@@ -913,6 +916,26 @@ function createMap() {
 			minZoom: configData.minZoom,
 			maxZoom: configData.maxZoom
 		})
+	});
+
+	gMap.getView().on('propertychange', function (e) {
+	    switch (e.key) {
+	        case 'resolution':
+	            var newVal = e.target.get(e.key);
+
+	            gBaseMapGroup.getLayers().forEach(function (lyr) {
+	                if (newVal <= lyr.get('visible_on_resolution')) {
+	                    lyr.setVisible(true);
+	                }
+	                else {
+	                    lyr.setVisible(false);
+	                }
+	            });
+
+	            $('.edit-information-text').text('Current Resolution: ' + newVal);
+
+	            break;
+	    }
 	});
 	
 	var mode = $.getUrlParam('mode');
@@ -1288,6 +1311,14 @@ function createStatusTips() {
     statusStatistic.innerHTML = '¾¯±¨: 0';
 
     $(statusStatistic).insertBefore("#map");	
+}
+
+function createEditInfo() {
+    var div = document.createElement("div");
+    div.className = 'edit-information-text';
+    div.innerHTML = '';
+
+    $(div).insertBefore("#map");
 }
 
 function getDangerFeatureById(id) {

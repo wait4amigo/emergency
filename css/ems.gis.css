@@ -279,7 +279,20 @@ html,body {
   top: 30px;
   width: 80px;
   display: inline-block;
-  text-align: center;
+  text-align: left;
+}
+
+.edit-information-text {
+  z-index: 100;
+  position: absolute;
+  color: #000080;
+  font-size: 13px;
+  font-weight: bold;
+  left: 420px;
+  top: 60px;
+  width: 300px;
+  display: inline-block;
+  text-align: left;
 }
 
 .object-name-filter {
