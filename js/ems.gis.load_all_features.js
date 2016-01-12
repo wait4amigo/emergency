@@ -1,4 +1,4 @@
-function loadAllFeatures() {
+﻿function loadAllFeatures() {
 	getData(addObjects);
 }
 

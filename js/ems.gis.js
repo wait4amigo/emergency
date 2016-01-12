@@ -1,4 +1,4 @@
-var gMap;
+ï»¿var gMap;
 var gBaseMapGroup;
 var gVideoLayer, gResourceLayer, gDangerLayer, gHarzadousLayer, gEscapeRouteLayer;
 var gVideoLayerSrc, gResourceLayerSrc, gDangerLayerSrc, gHarzadousLayerSrc, gEscapeRouteLayerSrc;
@@ -136,7 +136,7 @@ function initFactoryFilterTree() {
 			gMap.getView().setCenter(center);
 			gMap.getView().setZoom(node.li_attr.zoom);
 			
-			$('#selected-area-text').text('µ±Ç°ÇøÓò£º' + node.text);
+			$('#selected-area-text').text('å½“å‰åŒºåŸŸï¼š' + node.text);
 		}
 		
 		$("#factory-filter-dialog").dialog('close');
@@ -196,11 +196,11 @@ function registerRegionLocate() {
 		
 		var nodeId = $('#factory-filter-tree').jstree('get_selected');
 		if (!nodeId) {
-		    showMessage("´íÎó", "ÇëÏÈÑ¡ÔñÇøÓò!");
+		    showMessage("é”™è¯¯", "è¯·å…ˆé€‰æ‹©åŒºåŸŸ!");
 			return;
 		}
 		
-		$.when(customConfirm('±£´æÇøÓò·¶Î§', 'È·¶¨¸üĞÂÇøÓòÈ±Ê¡ÏÔÊ¾Îªµ±Ç°µØÍ¼·¶Î§Âğ?')).then(function (confirm) {
+		$.when(customConfirm('ä¿å­˜åŒºåŸŸèŒƒå›´', 'ç¡®å®šæ›´æ–°åŒºåŸŸç¼ºçœæ˜¾ç¤ºä¸ºå½“å‰åœ°å›¾èŒƒå›´å—?')).then(function (confirm) {
             if (confirm) {
                 saveRegionLocationInfo(nodeId, center[0], center[1], zoom);
             }
@@ -261,11 +261,11 @@ function registerPaintDangerRange() {
         registerPaint(gDangerLayerSrc, 'Polygon', function () {
             if (!gSelectedFeature || gSelectedFeature.get('kind') != ObjectKind.DANGER) {
                 unregisterPainting();
-                showMessage('´íÎó', 'ÇëÏÈÑ¡ÔñÒª»æÖÆÓ°ÏìÇøÓòµÄÎ£ÏÕÔ´!');
+                showMessage('é”™è¯¯', 'è¯·å…ˆé€‰æ‹©è¦ç»˜åˆ¶å½±å“åŒºåŸŸçš„å±é™©æº!');
                 return;
             }
         }, function (e) {
-            $.when(customConfirm('»æÖÆÓ°ÏìÇøÓò', 'Ó°ÏìÇøÓò»æÖÆÍê³É£¬È·¶¨¸üĞÂÎª´ËĞÂ»æÖÆµÄÓ°ÏìÇøÓòÂğ?')).then(function (confirm) {
+            $.when(customConfirm('ç»˜åˆ¶å½±å“åŒºåŸŸ', 'å½±å“åŒºåŸŸç»˜åˆ¶å®Œæˆï¼Œç¡®å®šæ›´æ–°ä¸ºæ­¤æ–°ç»˜åˆ¶çš„å½±å“åŒºåŸŸå—?')).then(function (confirm) {
                 var newFeature = e.feature;
 
                 var dangerId = gSelectedFeature.get('id');
@@ -368,11 +368,11 @@ function registerPaintEscapeRoute() {
         registerPaint(gEscapeRouteLayerSrc, 'LineString', function () {
             if (!gSelectedFeature || gSelectedFeature.get('kind') != ObjectKind.ESCAPEROUTE) {
                 unregisterPainting();
-                showMessage('´íÎó', 'ÇëÏÈÑ¡ÔñÒª»æÖÆµÄ±ÜÔÖÂ·Ïß!');
+                showMessage('é”™è¯¯', 'è¯·å…ˆé€‰æ‹©è¦ç»˜åˆ¶çš„é¿ç¾è·¯çº¿!');
                 return;
             }
         }, function (e) {
-            $.when(customConfirm('¸üĞÂ±ÜÔÖÂ·Ïß', '±ÜÔÖÂ·Ïß»æÖÆÍê³É£¬È·¶¨¸üĞÂÎª´ËĞÂ»æÖÆµÄÂ·ÏßÂğ?')).then(function (confirm) {
+            $.when(customConfirm('æ›´æ–°é¿ç¾è·¯çº¿', 'é¿ç¾è·¯çº¿ç»˜åˆ¶å®Œæˆï¼Œç¡®å®šæ›´æ–°ä¸ºæ­¤æ–°ç»˜åˆ¶çš„è·¯çº¿å—?')).then(function (confirm) {
                 var newCoords = e.feature.getGeometry().getCoordinates();
                 gEscapeRouteLayerSrc.removeFeature(e.feature);
 
@@ -827,7 +827,7 @@ function getLayerVector(layerTitle, vectorSource, isEscapeLine) {
 
 function createMap() {
     gBaseMapGroup = new ol.layer.Group({
-		title: '»ù´¡Í¼²ã',
+		title: 'åŸºç¡€å›¾å±‚',
         layers: []
     });
     
@@ -853,23 +853,23 @@ function createMap() {
     gEscapeRouteLayerSrc = new ol.source.Vector();
 
     var emergencyGroup = new ol.layer.Group({
-        title: 'Ó¦¼±Í¼²ã',
+        title: 'åº”æ€¥å›¾å±‚',
         layers: []
     });
     
-    gVideoLayer = getLayerVector('ÊÓÆµ', gVideoLayerSrc, false);
+    gVideoLayer = getLayerVector('è§†é¢‘', gVideoLayerSrc, false);
     emergencyGroup.getLayers().push(gVideoLayer);
     
-    gResourceLayer = getLayerVector('Ó¦¼±Îï×Ê', gResourceLayerSrc, false);
+    gResourceLayer = getLayerVector('åº”æ€¥ç‰©èµ„', gResourceLayerSrc, false);
     emergencyGroup.getLayers().push(gResourceLayer);
     
-    gDangerLayer = getLayerVector('Î£ÏÕÔ´', gDangerLayerSrc, false);
+    gDangerLayer = getLayerVector('å±é™©æº', gDangerLayerSrc, false);
     emergencyGroup.getLayers().push(gDangerLayer);
     
-    gHarzadousLayer = getLayerVector('Î£»¯Æ·', gHarzadousLayerSrc, false);
+    gHarzadousLayer = getLayerVector('å±åŒ–å“', gHarzadousLayerSrc, false);
     emergencyGroup.getLayers().push(gHarzadousLayer);
     		
-    gEscapeRouteLayer = getLayerVector('±ÜÔÖÂ·Ïß', gEscapeRouteLayerSrc, true);
+    gEscapeRouteLayer = getLayerVector('é¿ç¾è·¯çº¿', gEscapeRouteLayerSrc, true);
     emergencyGroup.getLayers().push(gEscapeRouteLayer);
 
     createMeasureDistanceControl();
@@ -1044,20 +1044,20 @@ function addObjectIntoList(feature) {
 	trStr += '<label class="obj-name-in-list">' + feature.get('name') + '</label>';
 	trStr += '</div>';
 
-	trStr += '<label class="obj-view-detail-in-list">ÏêÇé&raquo;</label>';
+	trStr += '<label class="obj-view-detail-in-list">è¯¦æƒ…&raquo;</label>';
 
 	var kind = feature.get('kind');
 	if (kind == ObjectKind.DANGER) {
 	    trStr += '<button class="btn-in-obj-list btn btn-primary btn-xs">';
 	    if (kind == ObjectKind.DANGER) {
 	        if (!feature.get('overlay'))
-	            trStr += 'ÊÂ¼şÂ¼Èë';
+	            trStr += 'äº‹ä»¶å½•å…¥';
 	        else
-	            trStr += '´¦ÖÃ';
+	            trStr += 'å¤„ç½®';
 	    } else if (kind == ObjectKind.VIDEO)
-	        trStr += '²é¿´ÊÓÆµ';
+	        trStr += 'æŸ¥çœ‹è§†é¢‘';
 	    else if (kind == ObjectKind.RESOURCE)
-	        trStr += '¼ì²é';
+	        trStr += 'æ£€æŸ¥';
 	    else
 	        trStr += 'Detail';
 	    trStr += '</button>';
@@ -1120,17 +1120,17 @@ function bindEventInputEvent() {
         var dangerName = $(this).parent('div').find('.obj-name-in-list').text();
         var dangerId = $(this).parent('div').find('.obj-id').text();
 
-        if ($(this).text() == "´¦ÖÃ") {
+        if ($(this).text() == "å¤„ç½®") {
             processDangerEvent(dangerId, function () { updateStatus(); });
         } else {
             $("#dialog-event-input").dialog({
-                title: "ÊÂ¼şÂ¼Èë",
+                title: "äº‹ä»¶å½•å…¥",
                 autoOpen: true,
                 resizable: false,
                 modal: true,
                 dialogClass: 'message-dialog',
                 buttons: {
-                    "È·ÈÏ": function () {
+                    "ç¡®è®¤": function () {
                         var desc = $("#event-description").val();
                         if (desc != '') {
                             saveDangerEvent(dangerId, $("#event-description").val(), function () { updateStatus(); });
@@ -1139,13 +1139,13 @@ function bindEventInputEvent() {
                             $("#event-description").focus();
                         }
                     },
-                    "È¡Ïû": function () {
+                    "å–æ¶ˆ": function () {
                         $(this).dialog("close");
                     }
                 },
                 open: function () {
                     $(".ui-dialog-titlebar-close").hide();
-                    $("#danger-for-event-input").text("Î£ÏÕÔ´£º " + dangerName);
+                    $("#danger-for-event-input").text("å±é™©æºï¼š " + dangerName);
                     $("#event-description").val('');
                 }
             });
@@ -1308,7 +1308,7 @@ function findFeatureById(id) {
 function createStatusTips() {
     var statusStatistic = document.createElement("div");
     statusStatistic.className = 'status-summary-text';
-    statusStatistic.innerHTML = '¾¯±¨: 0';
+    statusStatistic.innerHTML = 'è­¦æŠ¥: 0';
 
     $(statusStatistic).insertBefore("#map");	
 }
@@ -1349,7 +1349,7 @@ function updateStatus() {
   			updateDangerButtonText(fe.get('id'), obj.alarm);
   		}
   		
-		$('.status-summary-text').text('¾¯±¨: ' + warningCnt);
+		$('.status-summary-text').text('è­¦æŠ¥: ' + warningCnt);
   		if (warningCnt == 0)
   			$('.status-summary-text').css({ color: "#000080" });
   		else
@@ -1365,7 +1365,7 @@ function showMessage(title, customMessage, funcAfterOKClicked) {
         resizable: false,
         dialogClass: 'message-dialog',
         buttons: {
-            "¹Ø±Õ": function () {
+            "å…³é—­": function () {
                 $(this).dialog("close");
                 if (funcAfterOKClicked)
                     funcAfterOKClicked();
@@ -1386,11 +1386,11 @@ function customConfirm(title, customMessage) {
         modal: true,
         dialogClass: 'message-dialog',
         buttons: {
-            "È·ÈÏ": function () {
+            "ç¡®è®¤": function () {
                 $(this).dialog("close");
                 dfd.resolve(true);
             },
-            "È¡Ïû": function () {
+            "å–æ¶ˆ": function () {
                 $(this).dialog("close");
                 dfd.resolve(false);
             }
@@ -1418,9 +1418,9 @@ function updateDangerButtonText(id, hasEvent) {
     $(".obj-id").each(function (i, obj) {
         if ($(this).text() == id) {
             if (hasEvent)
-                $(this).siblings(".btn-in-obj-list").eq(0).text('´¦ÖÃ');
+                $(this).siblings(".btn-in-obj-list").eq(0).text('å¤„ç½®');
             else
-                $(this).siblings(".btn-in-obj-list").eq(0).text('ÊÂ¼şÂ¼Èë');
+                $(this).siblings(".btn-in-obj-list").eq(0).text('äº‹ä»¶å½•å…¥');
         }
     });
 }

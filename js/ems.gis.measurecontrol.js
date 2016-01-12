@@ -1,4 +1,4 @@
-var gMeasureTooltipElement;
+ï»¿var gMeasureTooltipElement;
 var gMeasureTooltip;
 var gHelpTooltipElement;
 var gHelpTooltip;
@@ -53,7 +53,7 @@ function createMeasureDistanceControl() {
 		var options = opt_options || {};
 
 		var button = document.createElement('button');
-		button.setAttribute('title', '²âÁ¿¾àÀë');
+		button.setAttribute('title', 'æµ‹é‡è·ç¦»');
 
 		var handleMeasureDistance = function(e) {
 			gMeasureType = 'line';
@@ -81,7 +81,7 @@ function createMeasureAreaControl() {
 		var options = opt_options || {};
 
 		var button = document.createElement('button');
-		button.setAttribute('title', '²âÁ¿Ãæ»ý');
+		button.setAttribute('title', 'æµ‹é‡é¢ç§¯');
 
 		var handleMeasureArea = function(e) {
 			gMeasureType = 'area';
@@ -109,14 +109,14 @@ var pointerMoveHandler = function(evt) {
 		return;
 	}
 
-	var helpMsg = 'µ¥»÷È·¶¨Æðµã';
+	var helpMsg = 'å•å‡»ç¡®å®šèµ·ç‚¹';
 
 	if (gSketch) {
 		var geom = (gSketch.getGeometry());
 		if (geom instanceof ol.geom.Polygon) {
-			helpMsg = 'µ¥»÷È·¶¨µØµã£¬Ë«»÷½áÊø';
+			helpMsg = 'å•å‡»ç¡®å®šåœ°ç‚¹ï¼ŒåŒå‡»ç»“æŸ';
 		} else if (geom instanceof ol.geom.LineString) {
-			helpMsg = 'µ¥»÷È·¶¨µØµã£¬Ë«»÷½áÊø';
+			helpMsg = 'å•å‡»ç¡®å®šåœ°ç‚¹ï¼ŒåŒå‡»ç»“æŸ';
 		}
 	}
 
@@ -260,9 +260,9 @@ var formatLength = function(line) {
 	
 	var output;
 	if (length > 100) {
-		output = (Math.round(length / 1000 * 100) / 100) + ' ' + '¹«Àï';
+		output = (Math.round(length / 1000 * 100) / 100) + ' ' + 'å…¬é‡Œ';
 	} else {
-		output = (Math.round(length * 100) / 100) + ' ' + 'Ã×';
+		output = (Math.round(length * 100) / 100) + ' ' + 'ç±³';
 	}
 	
 	return output;
@@ -281,9 +281,9 @@ var formatArea = function(polygon) {
 	}
 	var output;
 	if (area > 10000) {
-		output = (Math.round(area / 1000000 * 100) / 100) + ' ' + 'Æ½·½¹«Àï';
+		output = (Math.round(area / 1000000 * 100) / 100) + ' ' + 'å¹³æ–¹å…¬é‡Œ';
 	} else {
-		output = (Math.round(area * 100) / 100) + ' ' + 'Æ½·½Ã×';
+		output = (Math.round(area * 100) / 100) + ' ' + 'å¹³æ–¹ç±³';
 	}
 	return output; 
 };

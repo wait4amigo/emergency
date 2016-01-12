@@ -1,11 +1,11 @@
-var gDragBoxInteraction;
+ï»¿var gDragBoxInteraction;
 
 function createBoxSelectionControl(onBoxStart, onBoxEnd) {
 	app.BoxSelectionControl = function(opt_options) {
 		var options = opt_options || {};
 
 		var button = document.createElement('button');
-		button.setAttribute('title', 'À­¿òÑ¡Ôñ');
+		button.setAttribute('title', 'æ‹‰æ¡†é€‰æ‹©');
 
 		var this_ = this;
 		var handleBoxSelection = function(e) {

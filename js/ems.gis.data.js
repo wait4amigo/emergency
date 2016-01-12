@@ -1,4 +1,4 @@
-function getData(processData) {
+ï»¿function getData(processData) {
 	var data = {
 		"dangers": [
 			{
@@ -7,7 +7,7 @@ function getData(processData) {
 				"affect": [[[-40074567.91661944, 839.0158182865049], [-40074530.89243387, 862.6038074838835], [-40074481.0292162, 853.0491789482364], [-40074468.78734839, 786.1667791987072], [-40074541.04422669, 765.2660292769793], [-40074581.05423369, 821.1008897821667], [-40074567.91661944, 839.0158182865049]]],
 				"level": 1,
 				"type": 1,
-				"name": "È¼ÆøĞ¹Â©"
+				"name": "ç‡ƒæ°”æ³„æ¼"
 			},
 			{
 				"id": 102, 
@@ -15,7 +15,7 @@ function getData(processData) {
 				"affect": [[[-40074333.678929254, 906.0475091069037], [-40074303.52213294, 921.1259072647217], [-40074276.948322326, 920.0808697686352], [-40074266.79652951, 886.4903788230012], [-40074273.81320984, 867.2318306808377], [-40074334.42538461, 870.3669431690968], [-40074333.678929254, 906.0475091069037]]],
 				"level": 2,
 				"type": 2,
-				"name": "¼×´¼´¢¹Ş¡¢±ûÏ©´¢¹Ş"
+				"name": "ç”²é†‡å‚¨ç½ã€ä¸™çƒ¯å‚¨ç½"
 			},
 			{
 				"id": 103, 
@@ -23,7 +23,7 @@ function getData(processData) {
 				"affect": [],
 				"level": 3,
 				"type": 3,
-				"name": "VCM×ª»¯Çø"
+				"name": "VCMè½¬åŒ–åŒº"
 			},
 			{
 				"id": 104, 
@@ -32,7 +32,7 @@ function getData(processData) {
 				"lat": 6178557,
 				"level": 4,
 				"type": 4,
-				"name": "µçÊ¯ÀäÈ´¿â"
+				"name": "ç”µçŸ³å†·å´åº“"
 			}
 		],
 		"videos": [
@@ -40,13 +40,13 @@ function getData(processData) {
 				"id": 201, 
 				"coord": [-40074542, 813],
 				"zone": 1,
-				"name": "ÊÓÆµÒ»"
+				"name": "è§†é¢‘ä¸€"
 			},
 			{
 				"id": 202, 
 				"coord": [ -40074283, 662 ],
 				"zone": 2,
-				"name": "ÊÓÆµ¶ş"
+				"name": "è§†é¢‘äºŒ"
 			}
 		],
 		"resources": [
@@ -55,21 +55,21 @@ function getData(processData) {
 				"coord": [-40074740, 647],
 				"type": 1,
                 "danger_id": 101,
-				"name": "»ÆÉ³"
+				"name": "é»„æ²™"
 			},
 			{
 				"id": 302, 
 				"coord": [ -40074269, 657 ],
 				"type": 2,
 				"danger_id": 102,
-				"name": "Ë®Äà"
+				"name": "æ°´æ³¥"
 			},
 			{
 				"id": 303, 
 				"coord": [ -40074587, 800 ],
 				"type": 1,
 				"danger_id": 101,
-				"name": "Ãğ»ğÆ÷¡¢Ïû·ÀË¨"
+				"name": "ç­ç«å™¨ã€æ¶ˆé˜²æ “"
 			}
 		],
 		"harzadous": [
@@ -78,28 +78,28 @@ function getData(processData) {
 				"coord": [-23375963, 4067641],
 				"usage_id": 1,
 				"risk_id": 1,
-				"name": "¼×´¼¡¢±ûÏ©"
+				"name": "ç”²é†‡ã€ä¸™çƒ¯"
 			},
 			{
 				"id": 402, 
 				"coord": [ -40074572, 801 ],
 				"usage_id": 1,
 				"risk_id": 2,
-				"name": "Òº»¯ÌìÈ»Æø"
+				"name": "æ¶²åŒ–å¤©ç„¶æ°”"
 			},
 			{
 				"id": 403, 
 				"coord": [ -40074487, 800 ],
 				"usage_id": 2,
 				"risk_id": 3,
-				"name": "µçÊ¯"
+				"name": "ç”µçŸ³"
 			},
 			{
 				"id": 404, 
 				"coord": [ -40074314, 871 ],
 				"usage_id": 3,
 				"risk_id": 4,
-				"name": "Â¯Æø"
+				"name": "ç‚‰æ°”"
 			}
 		],
 		"escape_routes": [
@@ -107,19 +107,19 @@ function getData(processData) {
 			    "id": 501,
                 "danger_id": 102,
                 "coord": [[-40074535.66974814, 808.7097308999993], [-40074520.74064105, 808.4111487582603], [-40074520.29276784, 829.6104808217272], [-40074444.90077705, 830.3569361760746], [-40074444.30361277, 880.2201538464827], [-40074443.70644849, 954.2685249977472], [-40074501.0342197, 968.3018856594788]],
-				"name": "¼×´¼ÊÂ¹Ê³·ÀëÂ·ÏßÒ»"
+				"name": "ç”²é†‡äº‹æ•…æ’¤ç¦»è·¯çº¿ä¸€"
 			},
 			{
 				"id": 502, 
 				"danger_id": 102,
 				"coord": [[-40074535.66974815, 806.1717826952182], [-40074535.371166006, 796.0199898760933], [-40074555.3761695, 796.0199898760933], [-40074555.97333378, 766.7589399856743], [-40074622.55715139, 765.2660292769795], [-40074627.633047804, 712.1184080474428], [-40074677.49626547, 711.8198259057037], [-40074678.392011896, 804.6788719865234], [-40074756.32195089, 764.6688649935014], [-40074759.606354445, 806.7689469786962]],
-				"name": "¼×´¼ÊÂ¹Ê³·ÀëÂ·Ïß¶ş"
+				"name": "ç”²é†‡äº‹æ•…æ’¤ç¦»è·¯çº¿äºŒ"
 			},
 			{
 				"id": 503, 
 				"danger_id": 101,
 				"coord": [[-40074366.07509164, 660.1651153848621], [-40074363.38785236, 693.0091509761488], [-40074143.63139604, 695.3978081100605]],
-				"name": "È¼ÆøĞ¹Â©³·ÀëÂ·Ïß"
+				"name": "ç‡ƒæ°”æ³„æ¼æ’¤ç¦»è·¯çº¿"
 			}
 		]
 	};
@@ -267,105 +267,105 @@ function getFilterConfig(applyConfig) {
 		'danger_levels': [
 			{ 
 			    'type_id': 1,
-			    'type_name': "Ò»¼¶",
-				'type_desc': "Ò»¼¶ÖØ´óÎ£ÏÕÔ´"
+			    'type_name': "ä¸€çº§",
+				'type_desc': "ä¸€çº§é‡å¤§å±é™©æº"
 			},
 			{
 			    'type_id': 2,
-			    'type_name': "¶ş¼¶",
-			    'type_desc': "¶ş¼¶ÖØ´óÎ£ÏÕÔ´"
+			    'type_name': "äºŒçº§",
+			    'type_desc': "äºŒçº§é‡å¤§å±é™©æº"
 			},
 			{
 			    'type_id': 3,
-			    'type_name': "Èı¼¶",
-			    'type_desc': "Èı¼¶ÖØ´óÎ£ÏÕÔ´"
+			    'type_name': "ä¸‰çº§",
+			    'type_desc': "ä¸‰çº§é‡å¤§å±é™©æº"
 			},
 			{
 			    'type_id': 4,
-			    'type_name': "ËÄ¼¶",
-			    'type_desc': "ËÄ¼¶ÖØ´óÎ£ÏÕÔ´"
+			    'type_name': "å››çº§",
+			    'type_desc': "å››çº§é‡å¤§å±é™©æº"
 			}
 		],
 		'danger_types': [
 			{ 
 				'type_id': 1,
-				'type_name': "»ğÔÖ"
+				'type_name': "ç«ç¾"
 			},
 			{
 				'type_id': 2,
-				'type_name': "Ë®ÔÖ"
+				'type_name': "æ°´ç¾"
 			},
 			{
 				'type_id': 3,
-				'type_name': "´¥µç"
+				'type_name': "è§¦ç”µ"
 			},
 			{
 				'type_id': 4,
-				'type_name': "µÁÇÔ"
+				'type_name': "ç›—çªƒ"
 			},
 			{
 				'type_id': 5,
-				'type_name': "»¯Ñ§Æ·Ğ¹Â©"
+				'type_name': "åŒ–å­¦å“æ³„æ¼"
 			}
 		],
 		'harzadous_usage': [
 			{ 
 				'type_id': 1,
-				'type_name': "²úÆ·"
+				'type_name': "äº§å“"
 			},
 			{
 				'type_id': 2,
-				'type_name': "ÖĞ¼ä²úÆ·"
+				'type_name': "ä¸­é—´äº§å“"
 			},
 			{
 				'type_id': 3,
-				'type_name': "Ô­ÁÏ"
+				'type_name': "åŸæ–™"
 			}
 		],
 		'harzadous_risk': [
 			{ 
 				'type_id': 1,
-				'type_name': "¾ç¶¾"
+				'type_name': "å‰§æ¯’"
 			},
 			{
 				'type_id': 2,
-				'type_name': "Ò×ÖÆ¶¾"
+				'type_name': "æ˜“åˆ¶æ¯’"
 			},
 			{
 				'type_id': 3,
-				'type_name': "Ò×ÖÆ±¬"
+				'type_name': "æ˜“åˆ¶çˆ†"
 			},
 			{
 				'type_id': 4,
-				'type_name': "¹ú¼ÒÖØµã¼à¹Ü"
+				'type_name': "å›½å®¶é‡ç‚¹ç›‘ç®¡"
 			}
 		],
 		'resource_type': [
 			{ 
 				'type_id': 1,
-				'type_name': "Ïû·À³µ"
+				'type_name': "æ¶ˆé˜²è½¦"
 			},
 			{
 				'type_id': 2,
-				'type_name': "»ÆÉ³"
+				'type_name': "é»„æ²™"
 			},
 			{
 				'type_id': 3,
-				'type_name': "·À»¯·ş"
+				'type_name': "é˜²åŒ–æœ"
 			}
 		],
 		'video_zone': [
 			{
 			    'type_id': 1,
-			    'type_name': "ÇøÓòÒ»"
+			    'type_name': "åŒºåŸŸä¸€"
 			},
 			{
 			    'type_id': 2,
-			    'type_name': "ÇøÓò¶ş"
+			    'type_name': "åŒºåŸŸäºŒ"
 			},
 			{
 			    'type_id': 3,
-			    'type_name': "ÇøÓòÈı"
+			    'type_name': "åŒºåŸŸä¸‰"
 			}
 		]
 	};
@@ -378,20 +378,20 @@ function getFactoryTreeData() {
 	[
 		{
 			"id": 1,
-			"text": "È«³§",
+			"text": "å…¨å‚",
 			"state": { "opened" : true },
 			"li_attr": { "lon": -40074510, "lat": 600, "zoom": 16 },
 			"children":
 			[
 				{
 					"id": 2,
-					"text": "Á¶½¹·Ö³§",
+					"text": "ç‚¼ç„¦åˆ†å‚",
 					"li_attr": { "lon": -40074321, "lat": 933, "zoom": 18 },
 					"state": { "opened" : true }
 				},
 				{
 					"id": 3,
-					"text": "¼ØÑÎ³§",
+					"text": "é’¾ç›å‚",
 					"li_attr": { "lon": -40074625, "lat": 304, "zoom": 18 },
 					"state": { "opened" : true }
 				}
@@ -417,11 +417,11 @@ function addEscapeRoute(id, coords, escapeRouteAddedFunc) {
 }
 
 function updateEscapeRoute(id, coords, updateFinishedFunc) {
-    //alert("±ÜÔÖÂ·Ïßid=" + id + " ×ø±ê¸üĞÂÎª" + coords);
+    //alert("é¿ç¾è·¯çº¿id=" + id + " åæ ‡æ›´æ–°ä¸º" + coords);
     updateFinishedFunc();
 }
 
 function updateDangerRange(id, coords, updateFinishedFunc) {
-    //alert("Î£ÏÕÔ´id=" + id + " Ó°Ïì·¶Î§¸üĞÂÎª" + coords);
+    //alert("å±é™©æºid=" + id + " å½±å“èŒƒå›´æ›´æ–°ä¸º" + coords);
     updateFinishedFunc();
 }

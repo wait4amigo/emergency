@@ -1,4 +1,4 @@
-function initFilters() {
+ï»¿function initFilters() {
 	initObjectFilter();
 	
 	initDangerFilters();
@@ -180,8 +180,8 @@ function initFilterText() {
 	});
 	
 	$('#filter-danger-src button').click(function() {
-		$('#filter-danger-level span').text('Î£ÏÕ¼¶±ğ');
-		$('#filter-danger-type span').text('Î£ÏÕÀàĞÍ');
+		$('#filter-danger-level span').text('å±é™©çº§åˆ«');
+		$('#filter-danger-type span').text('å±é™©ç±»å‹');
 		
 		clearAllFilterId();
 		
@@ -189,8 +189,8 @@ function initFilterText() {
 	});
 	
 	$('#filter-harzadous button').click(function() {
-		$('#filter-harzadous-usage span').text('ÓÃÍ¾');
-		$('#filter-harzadous-risk span').text('Î£ÏÕĞÔ');
+		$('#filter-harzadous-usage span').text('ç”¨é€”');
+		$('#filter-harzadous-risk span').text('å±é™©æ€§');
 
 		clearAllFilterId();
 
@@ -198,8 +198,8 @@ function initFilterText() {
 	});
 	
 	$('#filter-video button').click(function() {
-		$('#filter-video-area span').text('ÊÓÆµÇøÓò');
-		//$('#filter-video-type span').text('ÊÓÆµÀàĞÍ');
+		$('#filter-video-area span').text('è§†é¢‘åŒºåŸŸ');
+		//$('#filter-video-type span').text('è§†é¢‘ç±»å‹');
 
 		clearAllFilterId();
 
@@ -207,8 +207,8 @@ function initFilterText() {
 	});
 	
 	$('#filter-resource button').click(function() {
-		$('#filter-resource-type span').text('Îï×ÊÀàĞÍ');
-		$('#filter-resource-danger span').text('¹ØÁªÎ£ÏÕÔ´');
+		$('#filter-resource-type span').text('ç‰©èµ„ç±»å‹');
+		$('#filter-resource-danger span').text('å…³è”å±é™©æº');
 
 		clearAllFilterId();
 
@@ -216,8 +216,8 @@ function initFilterText() {
 	});
 	
 	$('#filter-escape-route button').click(function() {
-		//$('#filter-escape-route-type span').text('Â·ÏßÀàĞÍ');
-	    $('#filter-escape-route-danger span').text('¹ØÁªÎ£ÏÕÔ´');
+		//$('#filter-escape-route-type span').text('è·¯çº¿ç±»å‹');
+	    $('#filter-escape-route-danger span').text('å…³è”å±é™©æº');
 
 		clearAllFilterId();
 

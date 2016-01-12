@@ -1,4 +1,4 @@
-var gDragControlInteraction;
+﻿var gDragControlInteraction;
 var gOnUpEvent;
 
 app.Drag = function() {

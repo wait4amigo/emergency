@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Accepts an ol.geom.LineString instance and a number (the desired number of segments) as parameters
  */
 var splitLineString = function(geometry, n) {

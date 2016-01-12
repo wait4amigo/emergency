@@ -1,4 +1,4 @@
-/**
+﻿/**
  * OpenLayers 3 Layer Switcher Control.
  * See [the examples](./examples) for usage.
  * @constructor
